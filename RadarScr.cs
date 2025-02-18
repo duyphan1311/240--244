@@ -399,6 +399,7 @@ public class RadarScr : mScreen
 			maxpage = listUse.size() / 5 + ((listUse.size() % 5 > 0) ? 1 : 0);
 		}
 		listIndex();
+		hText = 0;
 	}
 
 	private void updateKeyTouchControl()

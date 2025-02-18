@@ -62,7 +62,7 @@ public class BigBoss2 : Mob, IMapObject
 
 	private Char[] charAttack;
 
-	private int[] dameHP;
+	private long[] dameHP;
 
 	private sbyte type;
 
@@ -128,7 +128,7 @@ public class BigBoss2 : Mob, IMapObject
 
 	public new bool sleepEff;
 
-	public BigBoss2(int id, short px, short py, int templateID, int hp, int maxHp, int s)
+	public BigBoss2(int id, short px, short py, int templateID, long hp, long maxHp, int s)
 	{
 		if (shadowBig == null)
 		{
@@ -399,7 +399,7 @@ public class BigBoss2 : Mob, IMapObject
 		flyUp = true;
 	}
 
-	public void setAttack(Char[] cAttack, int[] dame, sbyte type)
+	public void setAttack(Char[] cAttack, long[] dame, sbyte type)
 	{
 		status = 3;
 		charAttack = cAttack;
@@ -425,7 +425,7 @@ public class BigBoss2 : Mob, IMapObject
 			{
 				for (int i = 0; i < charAttack.Length; i++)
 				{
-					charAttack[i].doInjure(dameHP[i], 0, isCrit: false, isMob: false);
+					charAttack[i].doInjure(dameHP[i], 0L, isCrit: false, isMob: false);
 					ServerEffect.addServerEffect(102, charAttack[i].cx, charAttack[i].cy, 1);
 				}
 			}
@@ -442,7 +442,7 @@ public class BigBoss2 : Mob, IMapObject
 			{
 				for (int j = 0; j < charAttack.Length; j++)
 				{
-					MonsterDart.addMonsterDart(x + ((dir != 1) ? (-45) : 45), y - 25, isBoss: true, dameHP[j], 0, charAttack[j], 24);
+					MonsterDart.addMonsterDart(x + ((dir != 1) ? (-45) : 45), y - 25, isBoss: true, dameHP[j], 0L, charAttack[j], 24);
 				}
 			}
 		}
@@ -463,7 +463,7 @@ public class BigBoss2 : Mob, IMapObject
 		{
 			for (int k = 0; k < charAttack.Length; k++)
 			{
-				charAttack[k].doInjure(dameHP[k], 0, isCrit: false, isMob: false);
+				charAttack[k].doInjure(dameHP[k], 0L, isCrit: false, isMob: false);
 				ServerEffect.addServerEffect(102, charAttack[k].cx, charAttack[k].cy, 1);
 			}
 		}
@@ -594,9 +594,9 @@ public class BigBoss2 : Mob, IMapObject
 
 	public new void startDie()
 	{
-		hp = 0;
+		hp = 0L;
 		injureThenDie = true;
-		hp = 0;
+		hp = 0L;
 		status = 1;
 		p1 = -3;
 		p2 = -dir;

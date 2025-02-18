@@ -28,7 +28,7 @@ internal class Mabu : Char
 
 	private Char[] charAttack;
 
-	private int[] damageAttack;
+	private long[] damageAttack;
 
 	private int dx;
 
@@ -127,7 +127,7 @@ internal class Mabu : Char
 		}
 	}
 
-	public void setSkill(sbyte id, short x, short y, Char[] charHit, int[] damageHit)
+	public void setSkill(sbyte id, short x, short y, Char[] charHit, long[] damageHit)
 	{
 		skillID = id;
 		xTo = x;
@@ -190,7 +190,7 @@ internal class Mabu : Char
 					cdir = lastDir;
 					for (int i = 0; i < charAttack.Length; i++)
 					{
-						charAttack[i].doInjure(damageAttack[i], 0, isCrit: false, isMob: false);
+						charAttack[i].doInjure(damageAttack[i], 0L, isCrit: false, isMob: false);
 					}
 				}
 			}
@@ -211,7 +211,7 @@ internal class Mabu : Char
 			{
 				cx = xTo;
 				cy = yTo;
-				charAttack[pIndex].doInjure(damageAttack[pIndex], 0, isCrit: false, isMob: false);
+				charAttack[pIndex].doInjure(damageAttack[pIndex], 0L, isCrit: false, isMob: false);
 				pIndex++;
 				if (pIndex == charAttack.Length)
 				{

@@ -377,6 +377,8 @@ public class GameCanvas : IActionListener
 
 	public static ServerScr serverScr;
 
+	public static SelectCharScr _SelectCharScr;
+
 	public bool resetToLoginScr;
 
 	public static long TIMEOUT;
@@ -413,97 +415,105 @@ public class GameCanvas : IActionListener
 
 	public void initGame()
 	{
-		MotherCanvas.instance.setChildCanvas(this);
-		w = MotherCanvas.instance.getWidthz();
-		h = MotherCanvas.instance.getHeightz();
-		hw = w / 2;
-		hh = h / 2;
-		isTouch = true;
-		if (w >= 240)
+		try
 		{
-			isTouchControl = true;
-		}
-		if (w < 320)
-		{
-			isTouchControlSmallScreen = true;
-		}
-		if (w >= 320)
-		{
-			isTouchControlLargeScreen = true;
-		}
-		msgdlg = new MsgDlg();
-		if (h <= 160)
-		{
-			Paint.hTab = 15;
-			mScreen.cmdH = 17;
-		}
-		GameScr.d = ((w <= h) ? h : w) + 20;
-		instance = this;
-		mFont.init();
-		mScreen.ITEM_HEIGHT = mFont.tahoma_8b.getHeight() + 8;
-		initPaint();
-		loadDust();
-		loadWaterSplash();
-		panel = new Panel();
-		imgShuriken = loadImage("/mainImage/myTexture2df.png");
-		int num = Rms.loadRMSInt("clienttype");
-		if (num != -1)
-		{
-			if (num > 7)
+			MotherCanvas.instance.setChildCanvas(this);
+			w = MotherCanvas.instance.getWidthz();
+			h = MotherCanvas.instance.getHeightz();
+			hw = w / 2;
+			hh = h / 2;
+			isTouch = true;
+			if (w >= 240)
 			{
-				Rms.saveRMSInt("clienttype", mSystem.clientType);
+				isTouchControl = true;
 			}
-			else
+			if (w < 320)
 			{
-				mSystem.clientType = num;
+				isTouchControlSmallScreen = true;
 			}
+			if (w >= 320)
+			{
+				isTouchControlLargeScreen = true;
+			}
+			msgdlg = new MsgDlg();
+			if (h <= 160)
+			{
+				Paint.hTab = 15;
+				mScreen.cmdH = 17;
+			}
+			GameScr.d = ((w <= h) ? h : w) + 20;
+			instance = this;
+			mFont.init();
+			mScreen.ITEM_HEIGHT = mFont.tahoma_8b.getHeight() + 8;
+			initPaint();
+			loadDust();
+			loadWaterSplash();
+			panel = new Panel();
+			imgShuriken = loadImage("/mainImage/myTexture2df.png");
+			int num = Rms.loadRMSInt("clienttype");
+			if (num != -1)
+			{
+				if (num > 7)
+				{
+					Rms.saveRMSInt("clienttype", mSystem.clientType);
+				}
+				else
+				{
+					mSystem.clientType = num;
+				}
+			}
+			if (mSystem.clientType == 7 && (Rms.loadRMSString("fake") == null || Rms.loadRMSString("fake") == string.Empty))
+			{
+				imgShuriken = loadImage("/mainImage/wait.png");
+			}
+			imgClear = loadImage("/mainImage/myTexture2der.png");
+			img12 = loadImage("/mainImage/12+.png");
+			debugUpdate = new MyVector();
+			debugPaint = new MyVector();
+			debugSession = new MyVector();
+			for (int i = 0; i < 3; i++)
+			{
+				imgBorder[i] = loadImage("/mainImage/myTexture2dbd" + i + ".png");
+			}
+			borderConnerW = mGraphics.getImageWidth(imgBorder[0]);
+			borderConnerH = mGraphics.getImageHeight(imgBorder[0]);
+			borderCenterW = mGraphics.getImageWidth(imgBorder[1]);
+			borderCenterH = mGraphics.getImageHeight(imgBorder[1]);
+			Panel.graphics = Rms.loadRMSInt("lowGraphic");
+			lowGraphic = Rms.loadRMSInt("lowGraphic") == 1;
+			GameScr.isPaintChatVip = Rms.loadRMSInt("serverchat") != 1;
+			Char.isPaintAura = Rms.loadRMSInt("isPaintAura") == 1;
+			Char.isPaintAura2 = Rms.loadRMSInt("isPaintAura2") == 1;
+			Res.init();
+			SmallImage.loadBigImage();
+			Panel.WIDTH_PANEL = 176;
+			if (Panel.WIDTH_PANEL > w)
+			{
+				Panel.WIDTH_PANEL = w;
+			}
+			InfoMe.gI().loadCharId();
+			Command.btn0left = loadImage("/mainImage/btn0left.png");
+			Command.btn0mid = loadImage("/mainImage/btn0mid.png");
+			Command.btn0right = loadImage("/mainImage/btn0right.png");
+			Command.btn1left = loadImage("/mainImage/btn1left.png");
+			Command.btn1mid = loadImage("/mainImage/btn1mid.png");
+			Command.btn1right = loadImage("/mainImage/btn1right.png");
+			serverScreen = new ServerListScreen();
+			img12 = loadImage("/mainImage/12+.png");
+			for (int j = 0; j < 7; j++)
+			{
+				imgBlue[j] = loadImage("/effectdata/blue/" + j + ".png");
+				imgViolet[j] = loadImage("/effectdata/violet/" + j + ".png");
+			}
+			ServerListScreen.createDeleteRMS();
+			serverScr = new ServerScr();
+			loginScr = new LoginScr();
+			_SelectCharScr = new SelectCharScr();
 		}
-		if (mSystem.clientType == 7 && (Rms.loadRMSString("fake") == null || Rms.loadRMSString("fake") == string.Empty))
+		catch (Exception)
 		{
-			imgShuriken = loadImage("/mainImage/wait.png");
+			Debug.LogError("----------------->>>>>>>>>>errr");
 		}
-		imgClear = loadImage("/mainImage/myTexture2der.png");
-		img12 = loadImage("/mainImage/12+.png");
-		debugUpdate = new MyVector();
-		debugPaint = new MyVector();
-		debugSession = new MyVector();
-		for (int i = 0; i < 3; i++)
-		{
-			imgBorder[i] = loadImage("/mainImage/myTexture2dbd" + i + ".png");
-		}
-		borderConnerW = mGraphics.getImageWidth(imgBorder[0]);
-		borderConnerH = mGraphics.getImageHeight(imgBorder[0]);
-		borderCenterW = mGraphics.getImageWidth(imgBorder[1]);
-		borderCenterH = mGraphics.getImageHeight(imgBorder[1]);
-		Panel.graphics = Rms.loadRMSInt("lowGraphic");
-		lowGraphic = Rms.loadRMSInt("lowGraphic") == 1;
-		GameScr.isPaintChatVip = Rms.loadRMSInt("serverchat") != 1;
-		Char.isPaintAura = Rms.loadRMSInt("isPaintAura") == 1;
-		Char.isPaintAura2 = Rms.loadRMSInt("isPaintAura2") == 1;
-		Res.init();
-		SmallImage.loadBigImage();
-		Panel.WIDTH_PANEL = 176;
-		if (Panel.WIDTH_PANEL > w)
-		{
-			Panel.WIDTH_PANEL = w;
-		}
-		InfoMe.gI().loadCharId();
-		Command.btn0left = loadImage("/mainImage/btn0left.png");
-		Command.btn0mid = loadImage("/mainImage/btn0mid.png");
-		Command.btn0right = loadImage("/mainImage/btn0right.png");
-		Command.btn1left = loadImage("/mainImage/btn1left.png");
-		Command.btn1mid = loadImage("/mainImage/btn1mid.png");
-		Command.btn1right = loadImage("/mainImage/btn1right.png");
-		serverScreen = new ServerListScreen();
-		img12 = loadImage("/mainImage/12+.png");
-		for (int j = 0; j < 7; j++)
-		{
-			imgBlue[j] = loadImage("/effectdata/blue/" + j + ".png");
-			imgViolet[j] = loadImage("/effectdata/violet/" + j + ".png");
-		}
-		ServerListScreen.createDeleteRMS();
-		serverScr = new ServerScr();
-		loginScr = new LoginScr();
 	}
 
 	public static GameCanvas gI()
@@ -525,10 +535,16 @@ public class GameCanvas : IActionListener
 
 	public void update()
 	{
-		if (gameTick % 100 == 0)
+		if (currentScreen == _SelectCharScr)
 		{
+			if (gameTick % 2 == 0 && SmallImage.vt_images_watingDowload.size() > 0)
+			{
+				Small small = (Small)SmallImage.vt_images_watingDowload.elementAt(0);
+				Service.gI().requestIcon(small.id);
+				SmallImage.vt_images_watingDowload.removeElementAt(0);
+			}
 		}
-		if (isRequestMapID == 2 && waitingTimeChangeMap < mSystem.currentTimeMillis() && gameTick % 2 == 0 && currentScreen != null)
+		else if (isRequestMapID == 2 && waitingTimeChangeMap < mSystem.currentTimeMillis() && gameTick % 2 == 0 && currentScreen != null)
 		{
 			if (currentScreen == GameScr.gI())
 			{
@@ -543,8 +559,8 @@ public class GameCanvas : IActionListener
 			}
 			if (SmallImage.vt_images_watingDowload.size() > 0)
 			{
-				Small small = (Small)SmallImage.vt_images_watingDowload.elementAt(0);
-				Service.gI().requestIcon(small.id);
+				Small small2 = (Small)SmallImage.vt_images_watingDowload.elementAt(0);
+				Service.gI().requestIcon(small2.id);
 				SmallImage.vt_images_watingDowload.removeElementAt(0);
 			}
 			if (Effect.dowloadEff.size() <= 0)
@@ -719,11 +735,7 @@ public class GameCanvas : IActionListener
 			{
 				if (Controller.isMain)
 				{
-					GameMidlet.IP = ServerListScreen.address[ServerListScreen.ipSelect];
-					GameMidlet.PORT = ServerListScreen.port[ServerListScreen.ipSelect];
 					ServerListScreen.testConnect = 2;
-					Rms.saveRMSInt("svselect", ServerListScreen.ipSelect);
-					Rms.saveIP(GameMidlet.IP + ":" + GameMidlet.PORT);
 					Service.gI().setClientType();
 					Service.gI().androidPack();
 				}
@@ -736,7 +748,6 @@ public class GameCanvas : IActionListener
 			}
 			if (Controller.isDisconnected)
 			{
-				Debug.Log("disconnect");
 				if (!Controller.isMain)
 				{
 					if (currentScreen == serverScreen && !Service.reciveFromMainSession)
@@ -756,22 +767,27 @@ public class GameCanvas : IActionListener
 			}
 			if (Controller.isConnectionFail)
 			{
-				Debug.Log("connect fail");
 				if (!Controller.isMain)
 				{
 					if (currentScreen == serverScreen && ServerListScreen.isGetData && !Service.reciveFromMainSession)
 					{
 						ServerListScreen.testConnect = 0;
 						serverScreen.cancel();
+						Debug.Log("connect fail 1");
 					}
 					if (currentScreen == loginScr && !Service.reciveFromMainSession)
 					{
 						onConnectionFail();
+						Debug.Log("connect fail 2");
 					}
 				}
-				else if (Session_ME.gI().isCompareIPConnect())
+				else
 				{
-					onConnectionFail();
+					if (Session_ME.gI().isCompareIPConnect())
+					{
+						onConnectionFail();
+					}
+					Debug.Log("connect fail 3");
 				}
 				Controller.isConnectionFail = false;
 			}
@@ -828,14 +844,15 @@ public class GameCanvas : IActionListener
 		Session_ME2.gI().close();
 		if (Controller.isLoadingData)
 		{
-			instance.resetToLoginScrz();
 			startOK(mResources.pls_restart_game_error, 8885, null);
 			Controller.isDisconnected = false;
 			return;
 		}
+		Debug.LogError(">>>>onDisconnected");
 		if (currentScreen != serverScreen)
 		{
-			startOKDlg(mResources.maychutathoacmatsong);
+			serverScreen.switchToMe();
+			startOK(mResources.maychutathoacmatsong + " [4]", 8884, null);
 		}
 		else
 		{
@@ -846,7 +863,6 @@ public class GameCanvas : IActionListener
 		{
 			ServerListScreen.testConnect = 0;
 		}
-		instance.resetToLoginScrz();
 		mSystem.endKey();
 	}
 
@@ -854,34 +870,7 @@ public class GameCanvas : IActionListener
 	{
 		if (currentScreen.Equals(SplashScr.instance))
 		{
-			if (ServerListScreen.hasConnected != null)
-			{
-				ServerListScreen.getServerList(ServerListScreen.linkDefault);
-				if (!ServerListScreen.hasConnected[0])
-				{
-					ServerListScreen.hasConnected[0] = true;
-					ServerListScreen.ipSelect = 0;
-					GameMidlet.IP = ServerListScreen.address[ServerListScreen.ipSelect];
-					Rms.saveRMSInt("svselect", ServerListScreen.ipSelect);
-					connect();
-				}
-				else if (!ServerListScreen.hasConnected[2])
-				{
-					ServerListScreen.hasConnected[2] = true;
-					ServerListScreen.ipSelect = 2;
-					GameMidlet.IP = ServerListScreen.address[ServerListScreen.ipSelect];
-					Rms.saveRMSInt("svselect", ServerListScreen.ipSelect);
-					connect();
-				}
-				else
-				{
-					startOK(mResources.pls_restart_game_error, 8885, null);
-				}
-			}
-			else
-			{
-				startOK(mResources.pls_restart_game_error, 8885, null);
-			}
+			startOK(mResources.maychutathoacmatsong + " [1]", 8884, null);
 			return;
 		}
 		Session_ME.gI().clearSendingMessage();
@@ -889,20 +878,12 @@ public class GameCanvas : IActionListener
 		ServerListScreen.isWait = false;
 		if (Controller.isLoadingData)
 		{
-			startOK(mResources.pls_restart_game_error, 8885, null);
+			startOK(mResources.maychutathoacmatsong + " [2]", 8884, null);
 			Controller.isConnectionFail = false;
 			return;
 		}
 		isResume = true;
 		LoginScr.isContinueToLogin = false;
-		if (loginScr != null)
-		{
-			instance.resetToLoginScrz();
-		}
-		else
-		{
-			loginScr = new LoginScr();
-		}
 		LoginScr.serverName = ServerListScreen.nameServer[ServerListScreen.ipSelect];
 		if (currentScreen != serverScreen)
 		{
@@ -933,7 +914,6 @@ public class GameCanvas : IActionListener
 
 	public static void connect()
 	{
-		Debug.LogError(">>connect:" + GameMidlet.IP + ":" + GameMidlet.PORT);
 		if (!Session_ME.gI().isConnected())
 		{
 			Session_ME.gI().connect(GameMidlet.IP, GameMidlet.PORT);
@@ -1053,7 +1033,6 @@ public class GameCanvas : IActionListener
 			}
 			Session_ME.gI().close();
 			Session_ME2.gI().close();
-			screen.switchToMe();
 		}
 		catch (Exception ex)
 		{
@@ -1063,6 +1042,16 @@ public class GameCanvas : IActionListener
 		ServerListScreen.countDieConnect = 0;
 		ServerListScreen.testConnect = -1;
 		ServerListScreen.loadScreen = true;
+		if (ServerListScreen.ipSelect == -1)
+		{
+			serverScr.switchToMe();
+			return;
+		}
+		if (serverScreen == null)
+		{
+			serverScreen = new ServerListScreen();
+		}
+		serverScreen.switchToMe();
 	}
 
 	public static void showErrorForm(int type, string moreInfo)
@@ -1166,8 +1155,8 @@ public class GameCanvas : IActionListener
 					}
 					if (layer == 1 && typeBg == 13)
 					{
-						g.drawImage(imgBG[1], -(GameScr.cmx >> layerSpeed[0]) + 200, yb[0] - (cmy >> 3) + 30, 0);
-						g.drawRegion(imgBG[1], 0, 0, bgW[1], bgH[1], 2, -(GameScr.cmx >> layerSpeed[0]) + 200 + bgW[1], yb[0] - (cmy >> 3) + 30, 0);
+						g.drawImage(imgBG[1], -(GameScr.cmx >> layerSpeed[0]) + TileMap.tmw * 24 / 4, yb[0] - (cmy >> 3) + 30, 0);
+						g.drawRegion(imgBG[1], 0, 0, bgW[1], bgH[1], 2, -(GameScr.cmx >> layerSpeed[0]) + TileMap.tmw * 24 / 4 + bgW[1], yb[0] - (cmy >> 3) + 30, 0);
 					}
 					if (layer == 3 && TileMap.mapID == 1)
 					{
@@ -1270,6 +1259,8 @@ public class GameCanvas : IActionListener
 		int gW = GameScr.gW;
 		int gH = GameScr.gH;
 		g.translate(-g.getTranslateX(), -g.getTranslateY());
+		g.setColor(0);
+		g.fillRect(0, 0, w, h);
 		try
 		{
 			if (paintBG)
@@ -1954,6 +1945,10 @@ public class GameCanvas : IActionListener
 						imgSun = null;
 						imgSun2 = null;
 						imgSun = loadImageRMS("/bg/sun" + typeBG + ((TileMap.bgType != 0) ? ("-" + TileMap.bgType) : string.Empty) + ".png");
+						if (loadImageRMS("/tWater/water_flow_" + typeBG) != null)
+						{
+							TileMap.imgWaterflow = loadImageRMS("/tWater/water_flow_" + typeBG);
+						}
 						sunX = GameScr.gW - GameScr.gW / 3;
 						sunY = yb[2] - 30;
 						break;
@@ -2352,8 +2347,8 @@ public class GameCanvas : IActionListener
 			isPointerSelect = true;
 		}
 		isPointerDown = false;
-		isPointerJustRelease = true;
 		isPointerMove = false;
+		isPointerJustRelease = true;
 		isPointerClick = true;
 		mScreen.keyTouch = -1;
 		px = x;
@@ -2500,29 +2495,17 @@ public class GameCanvas : IActionListener
 			{
 				currentDialog.paint(g);
 			}
-			if (Char.isLoadingMap || LoginScr.isContinueToLogin || ServerListScreen.waitToLogin || ServerListScreen.isWait)
+			if (isWait())
 			{
 				paintChangeMap(g);
-				if (timeLoading > 0 && LoginScr.timeLogin <= 0)
+				if (timeLoading > 0 && LoginScr.timeLogin <= 0 && mSystem.currentTimeMillis() - TIMEOUT >= 1000)
 				{
-					startWaitDlg();
-					if (mSystem.currentTimeMillis() - TIMEOUT >= 1000)
+					timeLoading--;
+					if (timeLoading == 0)
 					{
-						timeLoading--;
-						Res.outz("[COUNT] == " + timeLoading);
-						if (timeLoading == 0)
-						{
-							timeLoading = 15;
-						}
-						TIMEOUT = mSystem.currentTimeMillis();
+						timeLoading = 15;
 					}
-				}
-				if (mSystem.currentTimeMillis() > timeBreakLoading)
-				{
-					timeBreakLoading = mSystem.currentTimeMillis() + 30000;
-					if (currentScreen != null && !(currentScreen is GameScr) && !(currentScreen is SplashScr) && !(currentScreen is LoginScr))
-					{
-					}
+					TIMEOUT = mSystem.currentTimeMillis();
 				}
 			}
 			debug("PE", 1);
@@ -2948,7 +2931,7 @@ public class GameCanvas : IActionListener
 			break;
 		case 888397:
 		{
-			string text5 = (string)p;
+			string text4 = (string)p;
 			break;
 		}
 		case 9999:
@@ -2982,7 +2965,11 @@ public class GameCanvas : IActionListener
 			break;
 		case 8884:
 			endDlg();
-			loginScr.switchToMe();
+			if (serverScr == null)
+			{
+				serverScr = new ServerScr();
+			}
+			serverScr.switchToMe();
 			break;
 		case 8885:
 			GameMidlet.instance.exit();
@@ -3105,10 +3092,10 @@ public class GameCanvas : IActionListener
 			break;
 		case 88829:
 		{
-			string text4 = inputDlg.tfInput.getText();
-			if (!text4.Equals(string.Empty))
+			string text5 = inputDlg.tfInput.getText();
+			if (!text5.Equals(string.Empty))
 			{
-				Service.gI().changeName(text4, (int)p);
+				Service.gI().changeName(text5, (int)p);
 				InfoDlg.showWait();
 			}
 			break;
@@ -3243,14 +3230,11 @@ public class GameCanvas : IActionListener
 			mSystem.onDisconnected();
 			break;
 		case 100016:
-		{
-			sbyte b = 17;
-			ServerListScreen.ipSelect = b;
+			ServerListScreen.SetIpSelect(17, issave: false);
 			instance.doResetToLoginScr(serverScreen);
 			ServerListScreen.waitToLogin = true;
 			endDlg();
 			break;
-		}
 		}
 	}
 
@@ -3265,7 +3249,8 @@ public class GameCanvas : IActionListener
 		GameScr.gI().isPointerDowning = false;
 	}
 
-	public static void backToRegister()
+	public static bool isWait()
 	{
+		return Char.isLoadingMap || LoginScr.isContinueToLogin || ServerListScreen.waitToLogin || ServerListScreen.isWait || SelectCharScr.isWait;
 	}
 }

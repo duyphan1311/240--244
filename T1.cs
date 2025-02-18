@@ -40,6 +40,7 @@ public class T1 : mResources
 		mResources.maychutathoacmatsong = "Máy chủ tắt hoặc mất sóng";
 		mResources.cauhinhthap = "Cấu hình thấp";
 		mResources.cauhinhcao = "Cấu hình cao";
+		mResources.cauhinhthuong = "Cấu hình thường";
 		mResources.taidulieu = "Tải dữ liệu";
 		mResources.xoadulieu = "Xóa dữ liệu";
 		mResources.deletaDataNote = "Bạn cần xóa trong trường hợp có lỗi tải dữ liệu. Khi xóa xong, bạn phải tải lại toàn bộ để có thể chơi.";
@@ -63,6 +64,7 @@ public class T1 : mResources
 		mResources.note = "Bạn sẽ mất tài khoản đang chơi và không thể khôi phục được nếu đổi tài khoản khác, bạn có đồng ý không ?";
 		mResources.REGISTOPROTECT = "Đăng kí để bảo vệ tài khoản";
 		mResources.finishBomong = "Bạn phải hoàn thành nhiệm vụ tìm ngọc 6 sao mới có thể nạp tiền";
+		mResources.charger = "Diễn đàn và Nạp Ngọc";
 		mResources.charger = "Nạp tiền";
 		mResources.notYetSell = "Chưa có vật phẩm rao bán";
 		mResources.getUp = "Kéo lên để cập nhật thêm";
@@ -309,7 +311,7 @@ public class T1 : mResources
 		mResources.go_to_quest = "Hãy đến vị trí chớp nháy trên bản đồ để làm nhiệm vụ";
 		mResources.from_earth = "Dành cho Trái Đất\n";
 		mResources.from_namec = "Dành cho Namếc\n";
-		mResources.from_sayda = "Dành cho Sayda\n";
+		mResources.from_sayda = "Dành cho Xayda\n";
 		mResources.expire = "Hạn dùng";
 		mResources.pow_request = "Sức mạnh yêu cầu";
 		mResources.your_pow = "Sức mạnh của bạn";

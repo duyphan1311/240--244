@@ -699,15 +699,15 @@ public class GameScr : mScreen, IChatable
 
 	public static int padSkill;
 
-	public int dMP;
+	public long dMP;
 
-	public int twMp;
+	public long twMp;
 
 	public bool isInjureMp;
 
-	public int dHP;
+	public long dHP;
 
-	public int twHp;
+	public long twHp;
 
 	public bool isInjureHp;
 
@@ -1746,6 +1746,30 @@ public class GameScr : mScreen, IChatable
 		}
 	}
 
+	public void readOk()
+	{
+		try
+		{
+			Res.outz("<readOk><vsData<" + vsData + "==" + vcData);
+			Res.outz("<readOk><vsMap<" + vsMap + "==" + vcMap);
+			Res.outz("<readOk><vsSkill<" + vsSkill + "==" + vcSkill);
+			Res.outz("<readOk><vsItem<" + vsItem + "==" + vcItem);
+			if (vsData == vcData && vsMap == vcMap && vsSkill == vcSkill && vsItem == vcItem)
+			{
+				Res.outz(vsData + "," + vsMap + "," + vsSkill + "," + vsItem);
+				gI().readDart();
+				gI().readEfect();
+				gI().readArrow();
+				gI().readSkill();
+				Service.gI().clientOk();
+			}
+		}
+		catch (Exception ex)
+		{
+			Cout.LogError("Loi ham readOk: " + ex.ToString());
+		}
+	}
+
 	public static GameScr gI()
 	{
 		if (instance == null)
@@ -2631,7 +2655,7 @@ public class GameScr : mScreen, IChatable
 			{
 				cmdDead = new Command(mResources.DIES[0], 11038);
 				center = cmdDead;
-				Char.myCharz().cHP = 0;
+				Char.myCharz().cHP = 0L;
 			}
 			isHaveSelectSkill = false;
 		}
@@ -3992,7 +4016,7 @@ public class GameScr : mScreen, IChatable
 				{
 					continue;
 				}
-				int num = 0;
+				long num = 0L;
 				num = ((onScreenSkill[l].template.manaUseType == 2) ? 1 : ((onScreenSkill[l].template.manaUseType == 1) ? (onScreenSkill[l].manaUse * Char.myCharz().cMPFull / 100) : onScreenSkill[l].manaUse));
 				if (Char.myCharz().cMP >= num)
 				{
@@ -4019,7 +4043,7 @@ public class GameScr : mScreen, IChatable
 			{
 				continue;
 			}
-			int num2 = 0;
+			long num2 = 0L;
 			num2 = ((keySkill[m].template.manaUseType == 2) ? 1 : ((keySkill[m].template.manaUseType == 1) ? (keySkill[m].manaUse * Char.myCharz().cMPFull / 100) : keySkill[m].manaUse));
 			if (Char.myCharz().cMP >= num2)
 			{
@@ -4873,16 +4897,16 @@ public class GameScr : mScreen, IChatable
 				twHp++;
 				if (twHp == 20)
 				{
-					twHp = 0;
+					twHp = 0L;
 					isInjureHp = false;
 				}
 			}
 			else if (dHP > Char.myCharz().cHP)
 			{
-				int num = dHP - Char.myCharz().cHP >> 1;
+				long num = dHP - Char.myCharz().cHP >> 1;
 				if (num < 1)
 				{
-					num = 1;
+					num = 1L;
 				}
 				dHP -= num;
 			}
@@ -4895,16 +4919,16 @@ public class GameScr : mScreen, IChatable
 				twMp++;
 				if (twMp == 20)
 				{
-					twMp = 0;
+					twMp = 0L;
 					isInjureMp = false;
 				}
 			}
 			else if (dMP > Char.myCharz().cMP)
 			{
-				int num2 = dMP - Char.myCharz().cMP >> 1;
+				long num2 = dMP - Char.myCharz().cMP >> 1;
 				if (num2 < 1)
 				{
-					num2 = 1;
+					num2 = 1L;
 				}
 				dMP -= num2;
 			}
@@ -5901,9 +5925,9 @@ public class GameScr : mScreen, IChatable
 	public void paintImageBarRight(mGraphics g, Char c)
 	{
 		int num = (int)(c.cHP * hpBarW / c.cHPFull);
-		int num2 = c.cMP * mpBarW;
+		int num2 = (int)(c.cMP * mpBarW / c.cMPFull);
 		int num3 = (int)(dHP * hpBarW / c.cHPFull);
-		int num4 = dMP * mpBarW;
+		int num4 = (int)(dMP * mpBarW / c.cMPFull);
 		g.setClip(GameCanvas.w / 2 + 58 - mGraphics.getImageWidth(imgPanel), 0, 95, 100);
 		g.drawRegion(imgPanel, 0, 0, mGraphics.getImageWidth(imgPanel), mGraphics.getImageHeight(imgPanel), 2, GameCanvas.w / 2 + 60, 0, mGraphics.RIGHT | mGraphics.TOP);
 		g.setClip((int)(GameCanvas.w / 2 + 60 - 83 - hpBarW + hpBarW - num3), 5, num3, 10);
@@ -5931,9 +5955,9 @@ public class GameScr : mScreen, IChatable
 			if (c.charID == Char.myCharz().charID)
 			{
 				num = (int)(dHP * hpBarW / c.cHPFull);
-				num2 = dMP * mpBarW / c.cMPFull;
+				num2 = (int)(dMP * mpBarW / c.cMPFull);
 				num3 = (int)(c.cHP * hpBarW / c.cHPFull);
-				num4 = c.cMP * mpBarW / c.cMPFull;
+				num4 = (int)(c.cMP * mpBarW / c.cMPFull);
 			}
 			else
 			{
@@ -7547,7 +7571,7 @@ public class GameScr : mScreen, IChatable
 		int num3 = 0;
 		int width = imgHP_NEW.getWidth();
 		int num4 = imgHP_NEW.getHeight() / 2;
-		num2 = c.cHP * width / c.cHPFull;
+		num2 = (int)(c.cHP * width / c.cHPFull);
 		if (num2 <= 0)
 		{
 			num2 = 1;
@@ -7557,7 +7581,7 @@ public class GameScr : mScreen, IChatable
 			num2 = width;
 		}
 		g.drawRegion(imgHP_NEW, 0, num4, num2, num4, 0, x2, num, 0);
-		num3 = c.cMP * width / c.cMPFull;
+		num3 = (int)(c.cMP * width / c.cMPFull);
 		if (num3 <= 0)
 		{
 			num3 = 1;
@@ -7870,7 +7894,7 @@ public class GameScr : mScreen, IChatable
 		int num3 = 0;
 		int width = imgHP_NEW.getWidth();
 		int num4 = imgHP_NEW.getHeight() / 2;
-		num2 = c.cHP * width / c.cHPFull;
+		num2 = (int)(c.cHP * width / c.cHPFull);
 		if (num2 <= 0)
 		{
 			num2 = 1;
@@ -7880,7 +7904,7 @@ public class GameScr : mScreen, IChatable
 			num2 = width;
 		}
 		g.drawRegion(imgHP_NEW, 0, num4, 80, num4, 0, x2, num, 0);
-		num3 = c.cMP * width / c.cMPFull;
+		num3 = (int)(c.cMP * width / c.cMPFull);
 		if (num3 <= 0)
 		{
 			num3 = 1;

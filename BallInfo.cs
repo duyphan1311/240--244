@@ -35,7 +35,7 @@ public class BallInfo
 		cFocus.leg = -1;
 		cFocus.bag = -1;
 		cFocus.cName = string.Empty;
-		cFocus.cHP = (cFocus.cHPFull = 20);
+		cFocus.cHP = (cFocus.cHPFull = 20L);
 	}
 
 	public void UpdChar()

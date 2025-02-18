@@ -227,7 +227,7 @@ public class RegisterScreen : mScreen, IActionListener
 			tfCMND.setText("123456789");
 		}
 		tfNgayCap = new TField();
-		tfNgayCap.setIputType(TField.INPUT_TYPE_NUMERIC);
+		tfNgayCap.setIputType(TField.INPUT_TYPE_ANY);
 		tfNgayCap.width = 220;
 		tfNgayCap.height = mScreen.ITEM_HEIGHT + 2;
 		tfNgayCap.name = "Ngày cấp";

@@ -42,6 +42,9 @@ public class mSystem
 
 	public static void AddIpTest()
 	{
+		if (!isTest)
+		{
+		}
 	}
 
 	public static void resetCurInapp()

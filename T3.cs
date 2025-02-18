@@ -18,7 +18,9 @@ public class T3 : mResources
 		mResources.functionMaintain1 = "Fungsi dalam maintenance.";
 		mResources.napngoc = "Beli lebih gems";
 		mResources.nhatvatpham = "Yakin ingin memilih barang ini ?";
+		mResources.xinchucmung = "Hadiah Selamat , Andari has memenangkan Angka keberuntungan";
 		mResources.tang = "Tingkat";
+		mResources.den = "bergeser ke";
 		mResources.kquaVongQuay = "Hasil angka keberuntungan";
 		mResources.quayso = "Siapa yang harus hipilih";
 		mResources.gameInfo = "Pemberitahuan";
@@ -39,6 +41,7 @@ public class T3 : mResources
 		mResources.maychutathoacmatsong = "Koneksi gagal, harap coba kembali";
 		mResources.cauhinhthap = "Grafis kurang";
 		mResources.cauhinhcao = "Grafik tinggi";
+		mResources.cauhinhthuong = "Grafik medium";
 		mResources.taidulieu = "Download";
 		mResources.xoadulieu = "Hapus data";
 		mResources.deletaDataNote = "Kamu harus manghapus data ketika data game error. Setelah selesai manghapus, kamu harus download data lagi untuk bermain.";
@@ -62,7 +65,7 @@ public class T3 : mResources
 		mResources.note = "Kamu akan kehilangan account kamu selamanya jika kamu berganti ke account yang lain. Apakah kamu setuju?";
 		mResources.REGISTOPROTECT = "Daftar untuk melindungi account";
 		mResources.finishBomong = "Kamu harus menyelesaikan misi mencari Dragon Ball bintang 6 untuk recharge";
-		mResources.charger = "Beli lebih gems";
+		mResources.charger = "Forum and Beli lebih gems";
 		mResources.notYetSell = "Tidak ada item untuk dibeli";
 		mResources.getUp = "Tekan atas untuk mendapatkan lebih banyak";
 		mResources.getDown = "Tekan bawah untuk mendapatkan lebih banyak";
@@ -349,7 +352,7 @@ public class T3 : mResources
 		mResources.go_to_quest = "Pergi ke titik berkedip di peta untuk pencarian";
 		mResources.from_earth = "Hanya untuk Bumi\n";
 		mResources.from_namec = "Hanya untuk Namekian\n";
-		mResources.from_sayda = "Hanya untuk Saiyan\n";
+		mResources.from_sayda = "Hanya untuk Xaiyan\n";
 		mResources.expire = "Expire";
 		mResources.pow_request = "Power dibutuhkan";
 		mResources.your_pow = "Power kamu";

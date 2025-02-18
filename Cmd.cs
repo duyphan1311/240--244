@@ -1,5 +1,11 @@
 public class Cmd
 {
+	public const sbyte CMD_EXTRA_BIG = 12;
+
+	public const sbyte CMD_EXTRA = 24;
+
+	public const sbyte EXTRA_LINK = sbyte.MaxValue;
+
 	public const sbyte LOGIN = 0;
 
 	public const sbyte REGISTER = 1;
@@ -32,9 +38,7 @@ public class Cmd
 
 	public const sbyte REQUEST_MAPTEMPLATE = 10;
 
-	public const sbyte REQUEST_NPCTEMPLATE = 11;
-
-	public const sbyte REQUEST_NPCPLAYER = 12;
+	public const sbyte REQUEST_MOB_TEMPLATE = 11;
 
 	public const sbyte UPDATE_TYPE_PK = 35;
 
@@ -359,8 +363,6 @@ public class Cmd
 	public const sbyte MENU = 22;
 
 	public const sbyte OPEN_UI = 23;
-
-	public const sbyte OPTION_HAT = 24;
 
 	public const sbyte OPEN_UI_PT = 25;
 

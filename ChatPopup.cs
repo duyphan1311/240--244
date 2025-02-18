@@ -454,7 +454,6 @@ public class ChatPopup : Effect2, IActionListener
 				array4[nMaxslot_tren + k] = num + num3 / 2 - nMaxslot_duoi * 20 / 2 + k * 20 + mGraphics.getImageWidth(Panel.imgMaxStar);
 				array5[nMaxslot_tren + k] = num2 + num4 - 8;
 			}
-			Res.err(maxStarSlot + "maxStarSlot");
 			if (maxStarSlot >= 7)
 			{
 				int num9 = 7;

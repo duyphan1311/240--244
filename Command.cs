@@ -18,6 +18,8 @@ public class Command
 
 	public Image imgFocus;
 
+	public Image imgBtn;
+
 	public int x;
 
 	public int y;
@@ -179,13 +181,28 @@ public class Command
 				paintOngMau(btn1left, btn1mid, btn1right, x, y, w, g);
 			}
 		}
+		int num = 0;
+		int num2 = x + w / 2;
+		if (imgBtn != null)
+		{
+			num = imgBtn.getWidth();
+			num2 = x + num;
+			if (!isFocus)
+			{
+				g.drawImage(imgBtn, x, y, 0);
+			}
+			else
+			{
+				g.drawImage(imgBtn, x, y + 1, 0);
+			}
+		}
 		if (!isFocus)
 		{
-			mFont.tahoma_7b_dark.drawString(g, caption, x + w / 2, y + 7, 2);
+			mFont.tahoma_7b_dark.drawString(g, caption, num2, y + 7, (num == 0) ? 2 : 0);
 		}
 		else
 		{
-			mFont.tahoma_7b_green2.drawString(g, caption, x + w / 2, y + 7, 2);
+			mFont.tahoma_7b_green2.drawString(g, caption, num2, y + 7, (num == 0) ? 2 : 0);
 		}
 	}
 
@@ -213,7 +230,7 @@ public class Command
 			{
 				isFocus = true;
 			}
-			if (GameCanvas.isPointerJustRelease && GameCanvas.isPointerClick)
+			if (GameCanvas.isPointerJustRelease)
 			{
 				return true;
 			}
@@ -231,7 +248,7 @@ public class Command
 			{
 				isFocus = true;
 			}
-			if (GameCanvas.isPointerJustRelease && GameCanvas.isPointerClick)
+			if (GameCanvas.isPointerJustRelease)
 			{
 				return true;
 			}

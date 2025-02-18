@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 public class ServerScr : mScreen, IActionListener
 {
@@ -33,11 +32,11 @@ public class ServerScr : mScreen, IActionListener
 
 	private ListNew list;
 
-	private sbyte select_Area;
+	public sbyte select_Area;
 
-	private sbyte select_Lang;
+	public sbyte select_Lang;
 
-	private sbyte select_typeSv;
+	public sbyte select_typeSv;
 
 	private Command cmdChooseArea;
 
@@ -93,6 +92,8 @@ public class ServerScr : mScreen, IActionListener
 
 	private int ntypeSv;
 
+	private int wCheck;
+
 	private int xPopUp_Area;
 
 	private int yPopUp_Area;
@@ -107,11 +108,17 @@ public class ServerScr : mScreen, IActionListener
 
 	private string[] strArea = new string[2] { "VIỆT NAM", "GLOBAL" };
 
-	private string[] strTypeSV = new string[2] { "Máy chủ tiêu chuẩn", "Máy chủ theo mùa" };
+	private string[] strTypeSV = new string[2] { "Máy chủ tiêu chuẩn", "Máy chủ Super" };
 
-	private string[] strTypeSV_info = new string[2] { "Máy chủ tiêu chuẩn:\n-Không reset.\nTiến trình game bình thường.", "Máy chủ theo mùa:\n -Reset toàn bộ server và phát thưởng vào cuối mùa.\n x3 Sức mạnh\n x3 Tiềm năng\n x3 Vàng\n x3 Vật phẩm khác" };
+	private string[] strTypeSV_info = new string[2] { "Máy chủ tiêu chuẩn:\nTiến trình game bình thường.", "Máy chủ Super:\n -Không thể giao dịch vàng.\n x3 Sức mạnh\n x3 Tiềm năng\n x3 Vàng\n x3 Vật phẩm khác" };
+
+	private string strShowAll = "Chỉ hiện thị máy chủ đã chơi.";
 
 	public int cmy;
+
+	public static Image[] iconHead;
+
+	public static bool isShowSv_HaveChar;
 
 	public ServerScr()
 	{
@@ -127,9 +134,13 @@ public class ServerScr : mScreen, IActionListener
 
 	public override void switchToMe()
 	{
-		Debug.LogError(">>>>>>switchToMe: ");
+		Res.outz("switchToMe >>>>ServerScr: " + Rms.loadRMSInt(ServerListScreen.RMS_svselect));
 		SoundMn.gI().stopAll();
 		base.switchToMe();
+		loadIconHead();
+		mainSelect = ServerListScreen.ipSelect;
+		numw = 1;
+		numh = 1;
 		Load_NewUI();
 		if (!isPaintNewUi && !isChooseArea)
 		{
@@ -243,6 +254,7 @@ public class ServerScr : mScreen, IActionListener
 		}
 		UpdTouch_NewUI();
 		UpdTouch_NewUI_Popup();
+		ServerListScreen.updateDeleteData();
 	}
 
 	public override void paint(mGraphics g)
@@ -255,6 +267,10 @@ public class ServerScr : mScreen, IActionListener
 		else if (isPaintNewUi)
 		{
 			paintNewSelectMenu(g);
+			if (ServerListScreen.cmdDeleteRMS != null)
+			{
+				mFont.tahoma_7_white.drawString(g, mResources.xoadulieu, GameCanvas.w - 2, GameCanvas.h - 15, 1, mFont.tahoma_7_grey);
+			}
 		}
 		else
 		{
@@ -324,6 +340,7 @@ public class ServerScr : mScreen, IActionListener
 
 	public void perform(int idAction, object p)
 	{
+		Res.outz("idAction >>>>   " + idAction);
 		switch (idAction)
 		{
 		case 999:
@@ -337,11 +354,11 @@ public class ServerScr : mScreen, IActionListener
 				break;
 			}
 			vecServer.removeAllElements();
-			for (int j = 0; j < ServerListScreen.nameServer.Length; j++)
+			for (int i = 0; i < ServerListScreen.nameServer.Length; i++)
 			{
-				if (ServerListScreen.language[j] != 0)
+				if (ServerListScreen.language[i] != 0)
 				{
-					vecServer.addElement(new Command(ServerListScreen.nameServer[j], this, 100 + j, null));
+					vecServer.addElement(new Command(ServerListScreen.nameServer[i], this, 100 + i, null));
 				}
 			}
 			sort();
@@ -354,11 +371,11 @@ public class ServerScr : mScreen, IActionListener
 				break;
 			}
 			vecServer.removeAllElements();
-			for (int i = 0; i < ServerListScreen.nameServer.Length; i++)
+			for (int j = 0; j < ServerListScreen.nameServer.Length; j++)
 			{
-				if (ServerListScreen.language[i] == 0)
+				if (ServerListScreen.language[j] == 0)
 				{
-					vecServer.addElement(new Command(ServerListScreen.nameServer[i], this, 100 + i, null));
+					vecServer.addElement(new Command(ServerListScreen.nameServer[j], this, 100 + j, null));
 				}
 			}
 			sort();
@@ -366,22 +383,32 @@ public class ServerScr : mScreen, IActionListener
 		}
 		case 99:
 			Session_ME.gI().clearSendingMessage();
-			ServerListScreen.ipSelect = mainSelect;
+			ServerListScreen.SetIpSelect(mainSelect, issave: false);
 			GameCanvas.serverScreen.selectServer();
 			GameCanvas.serverScreen.switchToMe();
 			break;
 		default:
-			ServerListScreen.ipSelect = idAction - 100;
+			Session_ME.gI().close();
+			ServerListScreen.SetIpSelect(idAction - 100, issave: true);
+			ServerListScreen.ConnectIP();
+			if (GameCanvas.serverScreen == null)
+			{
+				GameCanvas.serverScreen = new ServerListScreen();
+			}
 			GameCanvas.serverScreen.selectServer();
 			GameCanvas.serverScreen.switchToMe();
 			break;
 		}
 	}
 
-	private void SetNewSelectMenu(int area, int typeSv)
+	public void SetNewSelectMenu(int area, int typeSv)
 	{
 		isChooseArea = false;
-		isPaintNewUi = true;
+		if (mSystem.clientType != 1)
+		{
+			isPaintNewUi = true;
+		}
+		wCheck = 10;
 		w = GameCanvas.w / 3 * 2;
 		h = GameCanvas.h / 3 * 2;
 		x = (GameCanvas.w - w) / 2;
@@ -395,7 +422,7 @@ public class ServerScr : mScreen, IActionListener
 			wPop = 80;
 			wsub = w - wPop - 15;
 		}
-		hsub = h - 10;
+		hsub = h - 10 - wCheck;
 		xsub = x + w - wsub - 5;
 		ysub = y + 5;
 		xPop = x + 5;
@@ -404,7 +431,7 @@ public class ServerScr : mScreen, IActionListener
 		xinfo = x + 5;
 		yinfo = y + strTypeSV.Length * (hPop + 5) + 5;
 		winfo = wPop;
-		hinfo = h - (5 + strTypeSV.Length * (hPop + 5) + 5);
+		hinfo = h - (5 + strTypeSV.Length * (hPop + 5) + 5) - wCheck;
 		yBox = 10;
 		wBox = 70;
 		hBox = 20;
@@ -440,34 +467,57 @@ public class ServerScr : mScreen, IActionListener
 		{
 			if (area == 1)
 			{
-				if (ServerListScreen.language[j] != 0)
+				if (ServerListScreen.language[j] == 0)
 				{
-					if (ServerListScreen.typeSv[j] == 1)
-					{
-						ntypeSv = 2;
-					}
-					if (ServerListScreen.typeSv[j] == typeSv)
-					{
-						Command command = new Command(ServerListScreen.nameServer[j], this, 100 + j, null);
-						command.isPaintNew = ServerListScreen.isNew[j] == 1;
-						Command o = command;
-						vecServer.addElement(o);
-					}
+					continue;
 				}
-			}
-			else
-			{
 				if (ServerListScreen.typeSv[j] == 1)
 				{
 					ntypeSv = 2;
 				}
-				if (ServerListScreen.language[j] == 0 && ServerListScreen.typeSv[j] == typeSv)
+				if (ServerListScreen.typeSv[j] != typeSv)
+				{
+					continue;
+				}
+				int num = -1;
+				if (ServerListScreen.typeClass != null && j < ServerListScreen.typeClass.Length)
+				{
+					num = ServerListScreen.typeClass[j];
+				}
+				if (!isShowSv_HaveChar || num != -1)
 				{
 					Command command = new Command(ServerListScreen.nameServer[j], this, 100 + j, null);
 					command.isPaintNew = ServerListScreen.isNew[j] == 1;
-					Command o2 = command;
-					vecServer.addElement(o2);
+					if (num > -1)
+					{
+						command.imgBtn = iconHead[num];
+					}
+					vecServer.addElement(command);
 				}
+				continue;
+			}
+			if (ServerListScreen.typeSv[j] == 1)
+			{
+				ntypeSv = 2;
+			}
+			if (ServerListScreen.language[j] != 0 || ServerListScreen.typeSv[j] != typeSv)
+			{
+				continue;
+			}
+			int num2 = -1;
+			if (ServerListScreen.typeClass != null && j < ServerListScreen.typeClass.Length)
+			{
+				num2 = ServerListScreen.typeClass[j];
+			}
+			if (!isShowSv_HaveChar || num2 != -1)
+			{
+				Command command2 = new Command(ServerListScreen.nameServer[j], this, 100 + j, null);
+				command2.isPaintNew = ServerListScreen.isNew[j] == 1;
+				if (num2 > -1)
+				{
+					command2.imgBtn = iconHead[num2];
+				}
+				vecServer.addElement(command2);
 			}
 		}
 		Sort_NewSv();
@@ -507,6 +557,7 @@ public class ServerScr : mScreen, IActionListener
 		{
 			mFont.tahoma_7_white.drawString(g, array[j], xinfo + 5, yinfo + 5 + j * 11, 0);
 		}
+		paintShowAllCheck(g);
 		paint_Area(g, 10, yBox);
 		paint_Lang(g, GameCanvas.w - wBox - 10, yBox);
 		g.setColor(10254674);
@@ -530,6 +581,7 @@ public class ServerScr : mScreen, IActionListener
 
 	private void paint_Area(mGraphics g, int x, int y)
 	{
+		x -= 5;
 		xPopUp_Area = x;
 		PopUp.paintPopUp(g, x, y, wBox, hBox, 0, isButton: true);
 		mFont.tahoma_7b_dark.drawString(g, strArea[select_Area], x + (wBox - 10) / 2, y + 5, 2);
@@ -572,20 +624,38 @@ public class ServerScr : mScreen, IActionListener
 			}
 			num = list.cmx;
 		}
-		if (GameCanvas.isPointSelect(xsub, ysub, wsub, hsub))
+		if (GameCanvas.isPointer(xsub, ysub, wsub, hsub))
 		{
 			int num2 = (GameCanvas.px - xsubpaint) / (wc + w2c) + (GameCanvas.py - ysubpaint + num) / (hc + w2c) * numw;
 			int num3 = vecServer.size();
 			if (num2 >= 0 && num2 < num3)
 			{
 				mainSelect = num2;
-				Command command = (Command)vecServer.elementAt(mainSelect);
-				if (command != null)
+				for (int i = 0; i < vecServer.size(); i++)
 				{
-					command.isFocus = true;
-					command.performAction();
+					Command command = (Command)vecServer.elementAt(i);
+					if (command == null)
+					{
+						continue;
+					}
+					if (i == mainSelect)
+					{
+						if (command.isPointerPressInsideCamera(0, num))
+						{
+							command.performAction();
+						}
+					}
+					else
+					{
+						command.isFocus = false;
+					}
 				}
 			}
+		}
+		if (GameCanvas.isPointer(xinfo - 2, yinfo + hinfo, wCheck + 4, wCheck + 4) && GameCanvas.isPointerJustRelease)
+		{
+			isShowSv_HaveChar = !isShowSv_HaveChar;
+			GetVecTypeSv(select_Area, select_typeSv);
 		}
 		if (ntypeSv == 1)
 		{
@@ -695,5 +765,31 @@ public class ServerScr : mScreen, IActionListener
 				}
 			}
 		}
+	}
+
+	public void loadIconHead()
+	{
+		if (iconHead == null)
+		{
+			iconHead = new Image[3];
+			for (int i = 0; i < iconHead.Length; i++)
+			{
+				iconHead[i] = GameCanvas.loadImage("/iconHead_" + i + ".png");
+			}
+		}
+	}
+
+	public void paintShowAllCheck(mGraphics g)
+	{
+		int num = xinfo;
+		int num2 = yinfo + hinfo + 2;
+		g.setColor(16777215);
+		g.fillRect(num, num2, wCheck, wCheck);
+		if (isShowSv_HaveChar)
+		{
+			g.setColor(3329330);
+			g.fillRect(num + 1, num2 + 1, wCheck - 2, wCheck - 2);
+		}
+		mFont.tahoma_7b_dark.drawString(g, strShowAll, num + wCheck + 2, num2, 0);
 	}
 }

@@ -38,9 +38,8 @@ public class Cout
 
 	public static void LogError3(string str)
 	{
-		if (mSystem.isTest)
+		if (!mSystem.isTest)
 		{
-			Debug.LogError(str);
 		}
 	}
 

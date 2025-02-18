@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class ServerListScreen : mScreen, IActionListener
 {
@@ -24,6 +25,12 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public static sbyte[] isNew;
 
+	public static sbyte[] typeClass;
+
+	public static Char[] listChar;
+
+	public static bool isHaveChar;
+
 	private Command[] cmd;
 
 	private Command cmdCallHotline;
@@ -46,7 +53,7 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public static string javaE = "Universe 1:52.74.230.22:14445:1:0:0,1,0";
 
-	public static string linkGetHost = "http://sv1.ngocrongonline.com/game/ngocrong031_t.php";
+	public static string linkGetHost = "http://112.213.94.23/mod/server_extra.php";
 
 	public static string linkDefault = javaVN;
 
@@ -66,9 +73,9 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public static int tWaitToLogin;
 
-	public static string RMS_NRlink = "NRlink3";
+	public static long count_reConnect;
 
-	public static int[] lengthServer = new int[3];
+	public static string RMS_NRlink = "NRlink3";
 
 	public static int ipSelect;
 
@@ -103,6 +110,16 @@ public class ServerListScreen : mScreen, IActionListener
 	public static bool loadScreen;
 
 	public static bool isAutoConect = true;
+
+	public static string RMS_svselect = "svselect";
+
+	public static string RMS_NR_Extralink = "NRlink_extra";
+
+	private Command[] cmd_New_Ui;
+
+	public static bool isNewUI;
+
+	public static bool isAutoLogin = true;
 
 	public ServerListScreen()
 	{
@@ -301,7 +318,6 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public static void getServerList(string str)
 	{
-		lengthServer = new int[3];
 		string[] array = Res.split(str.Trim(), ",", 0);
 		Res.outz(">>> getServerList= " + str);
 		mResources.loadLanguague(sbyte.Parse(array[array.Length - 2]));
@@ -335,34 +351,36 @@ public class ServerListScreen : mScreen, IActionListener
 			{
 				isNew[i] = 0;
 			}
-			lengthServer[language[i]]++;
 		}
 		serverPriority = sbyte.Parse(array[array.Length - 1]);
+		Res.outz(">>> getServerList= serverPriority: " + serverPriority);
 		saveIP();
 	}
 
 	public override void paint(mGraphics g)
 	{
-		int num = 105;
 		if (!loadScreen)
 		{
 			g.setColor(0);
 			g.fillRect(0, 0, GameCanvas.w, GameCanvas.h);
-			if (bigOk)
-			{
-			}
 		}
 		else
 		{
 			GameCanvas.paintBGGameScr(g);
 		}
-		int num2 = 2;
-		mFont.tahoma_7_white.drawString(g, "v" + GameMidlet.VERSION + "(" + mGraphics.zoomLevel + ")", GameCanvas.w - 2, num2 + 15, 1, mFont.tahoma_7_grey);
-		string empty = string.Empty;
-		empty = ((testConnect != 0) ? (empty + nameServer[ipSelect] + " connected") : (empty + nameServer[ipSelect] + " disconnect"));
-		if (mSystem.isTest)
+		int num = 2;
+		mFont.tahoma_7_white.drawString(g, "v" + GameMidlet.VERSION + "(" + mGraphics.zoomLevel + ")", GameCanvas.w - 2, num + 15, 1, mFont.tahoma_7_grey);
+		try
 		{
-			mFont.tahoma_7_white.drawString(g, empty, GameCanvas.w - 2, num2 + 15 + 15, 1, mFont.tahoma_7_grey);
+			string empty = string.Empty;
+			empty = ((testConnect != 0) ? (empty + nameServer[ipSelect] + " connected") : (empty + nameServer[ipSelect] + " disconnect"));
+			if (mSystem.isTest)
+			{
+				mFont.tahoma_7_white.drawString(g, empty, GameCanvas.w - 2, num + 15 + 15, 1, mFont.tahoma_7_grey);
+			}
+		}
+		catch (Exception)
+		{
 		}
 		if (!isGetData || loadScreen)
 		{
@@ -372,71 +390,79 @@ public class ServerListScreen : mScreen, IActionListener
 			}
 			else
 			{
-				mFont.tahoma_7_white.drawString(g, linkweb, GameCanvas.w - 2, num2, 1, mFont.tahoma_7_grey);
+				mFont.tahoma_7_white.drawString(g, linkweb, GameCanvas.w - 2, num, 1, mFont.tahoma_7_grey);
 			}
 		}
 		else
 		{
-			mFont.tahoma_7_white.drawString(g, linkweb, GameCanvas.w - 2, num2, 1, mFont.tahoma_7_grey);
+			mFont.tahoma_7_white.drawString(g, linkweb, GameCanvas.w - 2, num, 1, mFont.tahoma_7_grey);
 		}
-		int num3 = ((GameCanvas.w < 200) ? 160 : 180);
-		if (cmdDeleteRMS != null)
+		int num2 = ((GameCanvas.w < 200) ? 160 : 180);
+		paintDeleteData(g);
+		if (!loadScreen)
 		{
-			mFont.tahoma_7_white.drawString(g, mResources.xoadulieu, GameCanvas.w - 2, GameCanvas.h - 15, 1, mFont.tahoma_7_grey);
-		}
-		if (GameCanvas.currentDialog == null)
-		{
-			if (!loadScreen)
+			if (!bigOk)
 			{
-				if (!bigOk)
+				g.drawImage(LoginScr.imgTitle, GameCanvas.hw, GameCanvas.hh - 32, 3);
+				if (!isGetData)
 				{
-					g.drawImage(LoginScr.imgTitle, GameCanvas.hw, GameCanvas.hh - 32, 3);
-					if (!isGetData)
+					mFont.tahoma_7b_white.drawString(g, mResources.taidulieudechoi, GameCanvas.hw, GameCanvas.hh + 24, 2);
+					if (cmdDownload != null)
 					{
-						mFont.tahoma_7b_white.drawString(g, mResources.taidulieudechoi, GameCanvas.hw, GameCanvas.hh + 24, 2);
-						if (cmdDownload != null)
-						{
-							cmdDownload.paint(g);
-						}
-					}
-					else
-					{
-						if (cmdDownload != null)
-						{
-							cmdDownload.paint(g);
-						}
-						mFont.tahoma_7b_white.drawString(g, mResources.downloading_data + percent + "%", GameCanvas.w / 2, GameCanvas.hh + 24, 2);
-						GameScr.paintOngMauPercent(GameScr.frBarPow20, GameScr.frBarPow21, GameScr.frBarPow22, GameCanvas.w / 2 - 50, GameCanvas.hh + 45, 100, 100f, g);
-						GameScr.paintOngMauPercent(GameScr.frBarPow0, GameScr.frBarPow1, GameScr.frBarPow2, GameCanvas.w / 2 - 50, GameCanvas.hh + 45, 100, percent, g);
-					}
-				}
-			}
-			else
-			{
-				int num4 = GameCanvas.hh - 15 * cmd.Length - 15;
-				if (num4 < 25)
-				{
-					num4 = 25;
-				}
-				if (LoginScr.imgTitle != null)
-				{
-					g.drawImage(LoginScr.imgTitle, GameCanvas.hw, num4, 3);
-				}
-				for (int i = 0; i < cmd.Length; i++)
-				{
-					cmd[i].paint(g);
-				}
-				g.setClip(0, 0, GameCanvas.w, GameCanvas.h);
-				if (testConnect == -1)
-				{
-					if (GameCanvas.gameTick % 20 > 10)
-					{
-						g.drawRegion(GameScr.imgRoomStat, 0, 14, 7, 7, 0, (GameCanvas.w - mFont.tahoma_7b_dark.getWidth(cmd[2 + nCmdPlay].caption) >> 1) - 10, cmd[2 + nCmdPlay].y + 10, 0);
+						cmdDownload.paint(g);
 					}
 				}
 				else
 				{
-					g.drawRegion(GameScr.imgRoomStat, 0, testConnect * 7, 7, 7, 0, (GameCanvas.w - mFont.tahoma_7b_dark.getWidth(cmd[2 + nCmdPlay].caption) >> 1) - 10, cmd[2 + nCmdPlay].y + 9, 0);
+					if (cmdDownload != null)
+					{
+						cmdDownload.paint(g);
+					}
+					mFont.tahoma_7b_white.drawString(g, mResources.downloading_data + percent + "%", GameCanvas.w / 2, GameCanvas.hh + 24, 2);
+					GameScr.paintOngMauPercent(GameScr.frBarPow20, GameScr.frBarPow21, GameScr.frBarPow22, GameCanvas.w / 2 - 50, GameCanvas.hh + 45, 100, 100f, g);
+					GameScr.paintOngMauPercent(GameScr.frBarPow0, GameScr.frBarPow1, GameScr.frBarPow2, GameCanvas.w / 2 - 50, GameCanvas.hh + 45, 100, percent, g);
+				}
+			}
+		}
+		else
+		{
+			int num3 = GameCanvas.hh - 15 * cmd.Length - 15;
+			if (num3 < 25)
+			{
+				num3 = 25;
+			}
+			if (LoginScr.imgTitle != null)
+			{
+				g.drawImage(LoginScr.imgTitle, GameCanvas.hw, num3, 3);
+			}
+			if (isNewUI)
+			{
+				paint_UI_New(g);
+			}
+			else
+			{
+				int num4 = cmd.Length;
+				if (mGraphics.zoomLevel > 1)
+				{
+				}
+				for (int i = 0; i < num4; i++)
+				{
+					cmd[i].paint(g);
+				}
+				g.setClip(0, 0, GameCanvas.w, GameCanvas.h);
+				if (mGraphics.zoomLevel == 1)
+				{
+					if (testConnect == -1)
+					{
+						if (GameCanvas.gameTick % 20 > 10)
+						{
+							g.drawRegion(GameScr.imgRoomStat, 0, 14, 7, 7, 0, (GameCanvas.w - mFont.tahoma_7b_dark.getWidth(cmd[2 + nCmdPlay].caption) >> 1) - 10, cmd[2 + nCmdPlay].y + 10, 0);
+						}
+					}
+					else
+					{
+						g.drawRegion(GameScr.imgRoomStat, 0, testConnect * 7, 7, 7, 0, (GameCanvas.w - mFont.tahoma_7b_dark.getWidth(cmd[2 + nCmdPlay].caption) >> 1) - 10, cmd[2 + nCmdPlay].y + 9, 0);
+					}
 				}
 			}
 		}
@@ -451,7 +477,8 @@ public class ServerListScreen : mScreen, IActionListener
 		GameMidlet.IP = address[ipSelect];
 		GameMidlet.PORT = port[ipSelect];
 		GameMidlet.LANGUAGE = language[ipSelect];
-		Rms.saveRMSInt("svselect", ipSelect);
+		Rms.saveRMSInt(RMS_svselect, ipSelect);
+		Res.err("1>>>saveRMSInt:  RMS_svselect == " + ipSelect);
 		if (language[ipSelect] != mResources.language)
 		{
 			mResources.loadLanguague(language[ipSelect]);
@@ -473,6 +500,7 @@ public class ServerListScreen : mScreen, IActionListener
 			if (tWaitToLogin == 50)
 			{
 				GameCanvas.serverScreen.selectServer();
+				waitToLogin = false;
 			}
 			if (tWaitToLogin == 100)
 			{
@@ -483,27 +511,6 @@ public class ServerListScreen : mScreen, IActionListener
 				GameCanvas.loginScr.doLogin();
 				Service.gI().finishUpdate();
 				waitToLogin = false;
-			}
-		}
-		if (flagServer > 0)
-		{
-			flagServer--;
-			if (flagServer == 0)
-			{
-				GameCanvas.endDlg();
-			}
-			if (testConnect == 2)
-			{
-				flagServer = 0;
-				GameCanvas.endDlg();
-			}
-		}
-		if (flagServer <= 0 && isAutoConect)
-		{
-			countDieConnect++;
-			if (countDieConnect > 100000)
-			{
-				countDieConnect = 0;
 			}
 		}
 		for (int i = 0; i < cmd.Length; i++)
@@ -523,32 +530,23 @@ public class ServerListScreen : mScreen, IActionListener
 			cmdDownload = null;
 		}
 		base.update();
-		if (Char.isLoadingMap || !loadScreen || !isAutoConect || GameCanvas.currentScreen != this || testConnect == 2)
+		if (Char.isLoadingMap || !loadScreen || !isAutoConect || GameCanvas.currentScreen != this)
 		{
 			return;
 		}
-		if (countDieConnect < ((mSystem.clientType != 1) ? 5 : 2))
+		if (!Session_ME.gI().isConnected())
 		{
-			if (flagServer <= 0)
+			if (mSystem.currentTimeMillis() > count_reConnect)
 			{
-				flagServer = 30;
-				GameCanvas.startWaitDlg(mResources.PLEASEWAIT);
-				GameCanvas.connect();
+				SetIpSelect(ipSelect, issave: true);
+				Session_ME.gI().close();
+				ConnectIP();
+				count_reConnect = mSystem.currentTimeMillis() + 5000;
 			}
 		}
-		else if (!Session_ME.gI().isConnected())
+		else
 		{
-			if (flagServer <= 0)
-			{
-				Command cmdYes = new Command(mResources.YES, GameCanvas.serverScreen, 18, null);
-				Command cmdNo = new Command(mResources.NO, GameCanvas.serverScreen, 19, null);
-				GameCanvas.startYesNoDlg(mResources.maychutathoacmatsong + "." + mResources.confirmChangeServer, cmdYes, cmdNo);
-				flagServer = 30;
-			}
-		}
-		else if (flagServer <= 0)
-		{
-			countDieConnect = 0;
+			count_reConnect = mSystem.currentTimeMillis() + 5000;
 		}
 	}
 
@@ -572,6 +570,14 @@ public class ServerListScreen : mScreen, IActionListener
 		}
 	}
 
+	public static void paintDeleteData(mGraphics g)
+	{
+		if (cmdDeleteRMS != null)
+		{
+			mFont.tahoma_7_white.drawString(g, mResources.xoadulieu, GameCanvas.w - 2, GameCanvas.h - 15, 1, mFont.tahoma_7_grey);
+		}
+	}
+
 	public override void updateKey()
 	{
 		if (GameCanvas.isTouch)
@@ -590,22 +596,28 @@ public class ServerListScreen : mScreen, IActionListener
 				base.updateKey();
 				return;
 			}
-			for (int i = 0; i < cmd.Length; i++)
+			if (isNewUI)
 			{
-				if (cmd[i] == null || !cmd[i].isPointerPressInside())
+				for (int i = 0; i < cmd_New_Ui.Length; i++)
 				{
-					continue;
-				}
-				if (testConnect == -1 || testConnect == 0)
-				{
-					if (cmd[i].caption.IndexOf(mResources.server) != -1)
+					if (cmd_New_Ui[i] != null && cmd_New_Ui[i].isPointerPressInside())
 					{
-						cmd[i].performAction();
+						cmd_New_Ui[i].performAction();
 					}
 				}
-				else
+			}
+			else
+			{
+				int num = cmd.Length;
+				if (mGraphics.zoomLevel > 1)
 				{
-					cmd[i].performAction();
+				}
+				for (int j = 0; j < num; j++)
+				{
+					if (cmd[j] != null && cmd[j].isPointerPressInside())
+					{
+						cmd[j].performAction();
+					}
 				}
 			}
 		}
@@ -613,10 +625,10 @@ public class ServerListScreen : mScreen, IActionListener
 		{
 			if (GameCanvas.keyPressed[8])
 			{
-				int num = ((mGraphics.zoomLevel <= 1) ? 4 : 2);
+				int num2 = ((mGraphics.zoomLevel <= 1) ? 4 : 2);
 				GameCanvas.keyPressed[8] = false;
 				selected++;
-				if (selected > num)
+				if (selected > num2)
 				{
 					selected = 0;
 				}
@@ -624,12 +636,12 @@ public class ServerListScreen : mScreen, IActionListener
 			}
 			if (GameCanvas.keyPressed[2])
 			{
-				int num2 = ((mGraphics.zoomLevel <= 1) ? 4 : 2);
+				int num3 = ((mGraphics.zoomLevel <= 1) ? 4 : 2);
 				GameCanvas.keyPressed[2] = false;
 				selected--;
 				if (selected < 0)
 				{
-					selected = num2;
+					selected = num3;
 				}
 				processInput();
 			}
@@ -670,7 +682,6 @@ public class ServerListScreen : mScreen, IActionListener
 					dataOutputStream.writeByte(0);
 				}
 			}
-			serverPriority = (sbyte)((!mSystem.isTest) ? serverPriority : (serverPriority + 5));
 			dataOutputStream.writeByte(serverPriority);
 			Rms.saveRMS(RMS_NRlink, dataOutputStream.toByteArray());
 			dataOutputStream.close();
@@ -708,7 +719,6 @@ public class ServerListScreen : mScreen, IActionListener
 		}
 		try
 		{
-			lengthServer = new int[3];
 			mResources.loadLanguague(dataInputStream.readByte());
 			sbyte b = dataInputStream.readByte();
 			nameServer = new string[b];
@@ -739,7 +749,6 @@ public class ServerListScreen : mScreen, IActionListener
 				{
 					isNew[i] = 0;
 				}
-				lengthServer[language[i]]++;
 			}
 			serverPriority = dataInputStream.readByte();
 			dataInputStream.close();
@@ -752,6 +761,7 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public override void switchToMe()
 	{
+		Res.outz(">>>>switchToMe  ServerListScreen: ");
 		EffectManager.remove();
 		GameScr.cmy = 0;
 		GameScr.cmx = 0;
@@ -819,7 +829,6 @@ public class ServerListScreen : mScreen, IActionListener
 		stopDownload = true;
 		GameCanvas.serverScreen.show2();
 		isGetData = false;
-		mSystem.println(">>>>>isGetData: " + isGetData);
 		cmdDownload.isFocus = true;
 		center = new Command(string.Empty, this, 2, null);
 	}
@@ -871,42 +880,7 @@ public class ServerListScreen : mScreen, IActionListener
 		if (idAction == 3)
 		{
 			Res.outz("toi day");
-			if (GameCanvas.loginScr == null)
-			{
-				GameCanvas.loginScr = new LoginScr();
-			}
-			GameCanvas.loginScr.switchToMe();
-			bool flag = Rms.loadRMSString("acc") != null && ((!Rms.loadRMSString("acc").Equals(string.Empty)) ? true : false);
-			bool flag2 = Rms.loadRMSString("userAo" + ipSelect) != null && ((!Rms.loadRMSString("userAo" + ipSelect).Equals(string.Empty)) ? true : false);
-			if (!flag && !flag2)
-			{
-				GameCanvas.connect();
-				string text = Rms.loadRMSString("userAo" + ipSelect);
-				if (text == null || text.Equals(string.Empty))
-				{
-					Service.gI().login2(string.Empty);
-				}
-				else
-				{
-					GameCanvas.loginScr.isLogin2 = true;
-					GameCanvas.connect();
-					Service.gI().setClientType();
-					Service.gI().login(text, string.Empty, GameMidlet.VERSION, 1);
-				}
-				if (Session_ME.connected)
-				{
-					GameCanvas.startWaitDlg();
-				}
-				else
-				{
-					GameCanvas.startOKDlg(mResources.maychutathoacmatsong);
-				}
-			}
-			else
-			{
-				GameCanvas.loginScr.doLogin();
-			}
-			LoginScr.serverName = nameServer[ipSelect];
+			Login_New();
 		}
 		if (idAction == 10100)
 		{
@@ -941,7 +915,7 @@ public class ServerListScreen : mScreen, IActionListener
 		}
 		if (idAction == 6)
 		{
-			ipSelect = GameCanvas.menu.menuSelectedItem;
+			SetIpSelect(GameCanvas.menu.menuSelectedItem, issave: false);
 			selectServer();
 		}
 		if (idAction == 7)
@@ -954,12 +928,12 @@ public class ServerListScreen : mScreen, IActionListener
 		}
 		if (idAction == 8)
 		{
-			bool flag3 = Rms.loadRMSInt("lowGraphic") == 1;
+			bool flag = Rms.loadRMSInt("lowGraphic") == 1;
 			MyVector myVector2 = new MyVector("cau hinh");
 			myVector2.addElement(new Command(mResources.cauhinhthap, this, 9, null));
 			myVector2.addElement(new Command(mResources.cauhinhcao, this, 10, null));
 			GameCanvas.menu.startAt(myVector2, 0);
-			if (flag3)
+			if (flag)
 			{
 				GameCanvas.menu.menuSelectedItem = 0;
 			}
@@ -985,8 +959,8 @@ public class ServerListScreen : mScreen, IActionListener
 				GameCanvas.loginScr = new LoginScr();
 			}
 			GameCanvas.loginScr.switchToMe();
-			string text2 = Rms.loadRMSString("userAo" + ipSelect);
-			if (text2 == null || text2.Equals(string.Empty))
+			string text = Rms.loadRMSString("userAo" + ipSelect);
+			if (text == null || text.Equals(string.Empty))
 			{
 				Service.gI().login2(string.Empty);
 			}
@@ -995,7 +969,7 @@ public class ServerListScreen : mScreen, IActionListener
 				GameCanvas.loginScr.isLogin2 = true;
 				GameCanvas.connect();
 				Service.gI().setClientType();
-				Service.gI().login(text2, string.Empty, GameMidlet.VERSION, 1);
+				Service.gI().login(text, string.Empty, GameMidlet.VERSION, 1);
 			}
 			GameCanvas.startWaitDlg(mResources.PLEASEWAIT);
 			Res.outz("tao user ao");
@@ -1095,6 +1069,7 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public void show2()
 	{
+		Debug.LogError(">>>>ServerListScreen show2: ");
 		GameScr.cmx = 0;
 		GameScr.cmy = 0;
 		initCommand();
@@ -1102,7 +1077,6 @@ public class ServerListScreen : mScreen, IActionListener
 		percent = 0;
 		bigOk = false;
 		isGetData = false;
-		mSystem.println(">>>>>isGetData: " + isGetData);
 		p = 0;
 		demPercent = 0;
 		strWait = mResources.PLEASEWAIT;
@@ -1149,5 +1123,232 @@ public class ServerListScreen : mScreen, IActionListener
 			}
 		}
 		mSystem.AddIpTest();
+	}
+
+	public static void ConnectIP()
+	{
+		GameMidlet.IP = address[ipSelect];
+		GameMidlet.PORT = port[ipSelect];
+		mResources.loadLanguague(language[ipSelect]);
+		LoginScr.serverName = nameServer[ipSelect];
+		GameCanvas.connect();
+	}
+
+	public static void SetIpSelect(int index, bool issave)
+	{
+		Debug.LogError(">>>>SetIpSelect: " + index + "  save:" + issave);
+		ipSelect = index;
+		if (issave)
+		{
+			Rms.saveRMSInt(RMS_svselect, ipSelect);
+			Res.err("2>>>saveRMSInt:  RMS_svselect == " + ipSelect);
+		}
+	}
+
+	public void Login_New()
+	{
+		if (GameCanvas.loginScr == null)
+		{
+			GameCanvas.loginScr = new LoginScr();
+		}
+		GameCanvas.loginScr.switchToMe();
+		bool flag = false;
+		bool flag2 = false;
+		string text = Rms.loadRMSString("userAo" + ipSelect);
+		try
+		{
+			if (!Rms.loadRMSString("acc").Equals(string.Empty))
+			{
+				flag = true;
+			}
+			if (!text.Equals(string.Empty))
+			{
+				flag2 = true;
+			}
+		}
+		catch (Exception)
+		{
+		}
+		GameCanvas.connect();
+		Service.gI().setClientType();
+		if (!flag && !flag2)
+		{
+			if (text == null || text.Equals(string.Empty))
+			{
+				Service.gI().login2(string.Empty);
+			}
+			else
+			{
+				GameCanvas.loginScr.isLogin2 = true;
+				Service.gI().login(text, string.Empty, GameMidlet.VERSION, 1);
+			}
+			Rms.saveRMSInt(RMS_svselect, ipSelect);
+			if (Session_ME.connected)
+			{
+				GameCanvas.startWaitDlg();
+			}
+			else
+			{
+				GameCanvas.startOK(mResources.maychutathoacmatsong + " [3]", 8884, null);
+			}
+		}
+		else
+		{
+			GameCanvas.loginScr.doLogin();
+		}
+		LoginScr.serverName = nameServer[ipSelect];
+	}
+
+	public static void LoadRMS_ExtraLink()
+	{
+		sbyte[] array = Rms.loadRMS(RMS_NR_Extralink);
+		if (array == null)
+		{
+			Controller.isEXTRA_LINK = false;
+			return;
+		}
+		DataInputStream dataInputStream = new DataInputStream(array);
+		if (dataInputStream == null)
+		{
+			return;
+		}
+		try
+		{
+			sbyte b = dataInputStream.readByte();
+			typeClass = new sbyte[b];
+			listChar = new Char[b];
+			for (int i = 0; i < b; i++)
+			{
+				typeClass[i] = dataInputStream.readByte();
+				if (typeClass[i] > -1)
+				{
+					isHaveChar = true;
+					listChar[i] = new Char();
+					listChar[i].cgender = typeClass[i];
+					listChar[i].head = dataInputStream.readShort();
+					listChar[i].body = dataInputStream.readShort();
+					listChar[i].leg = dataInputStream.readShort();
+					listChar[i].bag = dataInputStream.readShort();
+					listChar[i].cName = dataInputStream.readUTF();
+				}
+			}
+			dataInputStream.close();
+			Controller.isEXTRA_LINK = true;
+		}
+		catch (Exception)
+		{
+		}
+	}
+
+	public static void saveRMS_ExtraLink()
+	{
+		if (typeClass == null)
+		{
+			return;
+		}
+		DataOutputStream dataOutputStream = new DataOutputStream();
+		try
+		{
+			dataOutputStream.writeByte((sbyte)typeClass.Length);
+			for (int i = 0; i < typeClass.Length; i++)
+			{
+				dataOutputStream.writeByte(typeClass[i]);
+				if (typeClass[i] > -1 && listChar != null && listChar[i] != null)
+				{
+					dataOutputStream.writeShort((short)listChar[i].head);
+					dataOutputStream.writeShort((short)listChar[i].body);
+					dataOutputStream.writeShort((short)listChar[i].leg);
+					dataOutputStream.writeShort((short)listChar[i].bag);
+					dataOutputStream.writeUTF(listChar[i].cName);
+				}
+			}
+			Rms.saveRMS(RMS_NR_Extralink, dataOutputStream.toByteArray());
+			dataOutputStream.close();
+			SplashScr.loadIP();
+		}
+		catch (Exception)
+		{
+		}
+	}
+
+	public void Set_UI_New()
+	{
+		if (!GameCanvas.isTouch)
+		{
+			return;
+		}
+		isNewUI = true;
+		cmd_New_Ui = new Command[2];
+		int num = GameCanvas.hh - 15 * cmd_New_Ui.Length + 28;
+		for (int i = 0; i < cmd_New_Ui.Length; i++)
+		{
+			switch (i)
+			{
+			case 0:
+				cmd_New_Ui[0] = new Command(string.Empty, this, 3, null);
+				cmd_New_Ui[0].caption = mResources.playNew;
+				if (Rms.loadRMS("userAo" + ipSelect) != null)
+				{
+					cmd_New_Ui[0].caption = mResources.choitiep;
+				}
+				break;
+			case 1:
+				cmd_New_Ui[1] = new Command(mResources.change_account, this, 7, null);
+				break;
+			}
+			cmd_New_Ui[i].y = num;
+			cmd_New_Ui[i].setType();
+			cmd_New_Ui[i].x = (GameCanvas.w - cmd_New_Ui[i].w) / 2;
+			num += 30;
+		}
+	}
+
+	public void paint_UI_New(mGraphics g)
+	{
+		if (isNewUI)
+		{
+			for (int i = 0; i < cmd_New_Ui.Length; i++)
+			{
+				cmd_New_Ui[i].paint(g);
+			}
+		}
+	}
+
+	public static void CheckBack_ServerListScreen()
+	{
+		if (GameCanvas.serverScreen == null)
+		{
+			GameCanvas.serverScreen = new ServerListScreen();
+		}
+		bool flag = false;
+		bool flag2 = false;
+		try
+		{
+			if (!Rms.loadRMSString("acc").Equals(string.Empty))
+			{
+				flag = true;
+			}
+			if (!Rms.loadRMSString("userAo" + ipSelect).Equals(string.Empty))
+			{
+				flag2 = true;
+			}
+		}
+		catch (Exception)
+		{
+		}
+		Debug.LogError(">>>>CheckBack_ServerListScreen: " + ipSelect + "  auto login:" + isAutoLogin);
+		if (ipSelect == -1 || !isAutoLogin)
+		{
+			GameCanvas.serverScreen.switchToMe();
+			return;
+		}
+		if (!flag && !flag2)
+		{
+			GameCanvas.serverScreen.switchToMe();
+			return;
+		}
+		Controller.isEXTRA_LINK = false;
+		GameCanvas.serverScreen.switchToMe();
+		GameCanvas.serverScreen.Login_New();
 	}
 }

@@ -7218,7 +7218,7 @@ public class Panel : IActionListener, IChatable
 		{
 			Command center = new Command(mResources.DIES[0], 11038, GameScr.gI());
 			GameScr.gI().center = center;
-			Char.myCharz().cHP = 0;
+			Char.myCharz().cHP = 0L;
 		}
 	}
 
@@ -7309,7 +7309,7 @@ public class Panel : IActionListener, IChatable
 		{
 			Command center = new Command(mResources.DIES[0], 11038, GameScr.gI());
 			GameScr.gI().center = center;
-			Char.myCharz().cHP = 0;
+			Char.myCharz().cHP = 0L;
 		}
 	}
 
@@ -9641,7 +9641,7 @@ public class Panel : IActionListener, IChatable
 			GameCanvas.loginScr.tfPass.setText(string.Empty);
 			GameCanvas.loginScr.tfUser.setText(string.Empty);
 			GameCanvas.loginScr.isLogin2 = false;
-			GameCanvas.loginScr.switchToMe();
+			GameCanvas.serverScreen.switchToMe();
 			GameCanvas.endDlg();
 			hide();
 		}
@@ -9719,7 +9719,7 @@ public class Panel : IActionListener, IChatable
 				GameScr.info1.addInfo(mResources.clan_slogan_blank, 0);
 				return;
 			}
-			Service.gI().getClan(4, (sbyte)Char.myCharz().clan.imgID, chatTField.tfChat.getText());
+			Service.gI().getClan(4, Char.myCharz().clan.imgID, chatTField.tfChat.getText());
 			chatTField.isShow = false;
 			return;
 		}

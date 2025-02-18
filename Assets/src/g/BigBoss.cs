@@ -58,7 +58,7 @@ public class BigBoss : Mob, IMapObject
 
 	private Char[] charAttack;
 
-	private int[] dameHP;
+	private long[] dameHP;
 
 	private sbyte type;
 
@@ -140,7 +140,7 @@ public class BigBoss : Mob, IMapObject
 
 	public new bool sleepEff;
 
-	public BigBoss(int id, short px, short py, int templateID, int hp, int maxhp, int s)
+	public BigBoss(int id, short px, short py, int templateID, long hp, long maxhp, int s)
 	{
 		xFirst = (x = px + 20);
 		yFirst = (y = py);
@@ -437,7 +437,7 @@ public class BigBoss : Mob, IMapObject
 		flyUp = true;
 	}
 
-	public void setAttack(Char[] cAttack, int[] dame, sbyte type)
+	public void setAttack(Char[] cAttack, long[] dame, sbyte type)
 	{
 		charAttack = cAttack;
 		dameHP = dame;
@@ -456,7 +456,7 @@ public class BigBoss : Mob, IMapObject
 		{
 			for (int i = 0; i < charAttack.Length; i++)
 			{
-				charAttack[i].doInjure(dameHP[i], 0, isCrit: false, isMob: false);
+				charAttack[i].doInjure(dameHP[i], 0L, isCrit: false, isMob: false);
 			}
 		}
 		if (type == 7)
@@ -491,7 +491,7 @@ public class BigBoss : Mob, IMapObject
 			{
 				for (int i = 0; i < charAttack.Length; i++)
 				{
-					MonsterDart.addMonsterDart(x + ((dir != 1) ? (-45) : 45), y - 30, isBoss: true, dameHP[i], 0, charAttack[i], 24);
+					MonsterDart.addMonsterDart(x + ((dir != 1) ? (-45) : 45), y - 30, isBoss: true, dameHP[i], 0L, charAttack[i], 24);
 				}
 			}
 		}
@@ -509,7 +509,7 @@ public class BigBoss : Mob, IMapObject
 			{
 				for (int j = 0; j < charAttack.Length; j++)
 				{
-					charAttack[j].doInjure(dameHP[j], 0, isCrit: false, isMob: false);
+					charAttack[j].doInjure(dameHP[j], 0L, isCrit: false, isMob: false);
 					ServerEffect.addServerEffect(102, charAttack[j].cx, charAttack[j].cy, 1);
 				}
 			}
@@ -533,7 +533,7 @@ public class BigBoss : Mob, IMapObject
 			shock = true;
 			for (int k = 0; k < charAttack.Length; k++)
 			{
-				charAttack[k].doInjure(dameHP[k], 0, isCrit: false, isMob: false);
+				charAttack[k].doInjure(dameHP[k], 0L, isCrit: false, isMob: false);
 			}
 		}
 	}
@@ -664,9 +664,9 @@ public class BigBoss : Mob, IMapObject
 
 	public new void startDie()
 	{
-		hp = 0;
+		hp = 0L;
 		injureThenDie = true;
-		hp = 0;
+		hp = 0L;
 		status = 1;
 		p1 = -3;
 		p2 = -dir;

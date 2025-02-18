@@ -57,9 +57,11 @@ public class Mob : IMapObject
 
 	public int holdEffID;
 
-	public int hp;
+	public long hp;
 
-	public int maxHp;
+	public long maxHp;
+
+	public long hpInjure;
 
 	public int x;
 
@@ -88,8 +90,6 @@ public class Mob : IMapObject
 	public int w;
 
 	public int h;
-
-	public int hpInjure;
 
 	public int charIndex;
 
@@ -127,9 +127,9 @@ public class Mob : IMapObject
 
 	public Char cFocus;
 
-	public int dame;
+	public long dame;
 
-	public int dameMp;
+	public long dameMp;
 
 	public int sys;
 
@@ -247,7 +247,7 @@ public class Mob : IMapObject
 	{
 	}
 
-	public Mob(int mobId, bool isDisable, bool isDontMove, bool isFire, bool isIce, bool isWind, int templateId, int sys, int hp, sbyte level, int maxp, short pointx, short pointy, sbyte status, sbyte levelBoss)
+	public Mob(int mobId, bool isDisable, bool isDontMove, bool isFire, bool isIce, bool isWind, int templateId, int sys, long hp, sbyte level, long maxp, short pointx, short pointy, sbyte status, sbyte levelBoss)
 	{
 		this.isDisable = isDisable;
 		this.isDontMove = isDontMove;
@@ -274,7 +274,6 @@ public class Mob : IMapObject
 		maxHp = maxp;
 		this.levelBoss = levelBoss;
 		updateHp_bar();
-		per_tem = (int)((long)hp * 100L / maxHp);
 		isDie = false;
 		xSd = pointx;
 		ySd = pointy;
@@ -556,7 +555,7 @@ public class Mob : IMapObject
 					char2.cy = @char.cy - @char.ch;
 					if (@char.cgender == 0)
 					{
-						MonsterDart.addMonsterDart(x + dir * w, y, checkIsBoss(), -100, -100, char2, 25);
+						MonsterDart.addMonsterDart(x + dir * w, y, checkIsBoss(), -100L, -100L, char2, 25);
 					}
 				}
 			}
@@ -567,7 +566,7 @@ public class Mob : IMapObject
 				char3.cy = Char.myCharz().cy - Char.myCharz().ch;
 				if (Char.myCharz().cgender == 0)
 				{
-					MonsterDart.addMonsterDart(x + dir * w, y, checkIsBoss(), -100, -100, char3, 25);
+					MonsterDart.addMonsterDart(x + dir * w, y, checkIsBoss(), -100L, -100L, char3, 25);
 				}
 			}
 		}
@@ -1396,8 +1395,8 @@ public class Mob : IMapObject
 
 	public void updateHp_bar()
 	{
-		len = (int)((long)hp * 100L / maxHp * w_hp_bar) / 100;
-		per = (int)((long)hp * 100L / maxHp);
+		len = (int)(hp * 100 / maxHp * w_hp_bar) / 100;
+		per = (int)(hp * 100 / maxHp);
 		if (per == 100)
 		{
 			per_tem = per;
@@ -1497,9 +1496,9 @@ public class Mob : IMapObject
 
 	public void startDie()
 	{
-		hp = 0;
+		hp = 0L;
 		injureThenDie = true;
-		hp = 0;
+		hp = 0L;
 		status = 1;
 		Res.outz("MOB DIEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEe");
 		p1 = -3;

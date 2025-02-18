@@ -108,7 +108,14 @@ public class SmallImage
 				return;
 			}
 			imgNew[id] = new Small(imgEmpty, id);
-			vt_images_watingDowload.addElement(imgNew[id]);
+			if (GameCanvas.currentScreen == GameCanvas._SelectCharScr)
+			{
+				Service.gI().requestIcon(id);
+			}
+			else
+			{
+				vt_images_watingDowload.addElement(imgNew[id]);
+			}
 			return;
 		}
 		Image image2 = GameCanvas.loadImage("/SmallImage/Small" + id + ".png");
@@ -145,7 +152,14 @@ public class SmallImage
 		if (flag)
 		{
 			imgNew[id] = new Small(imgEmpty, id);
-			vt_images_watingDowload.addElement(imgNew[id]);
+			if (GameCanvas.currentScreen == GameCanvas._SelectCharScr)
+			{
+				Service.gI().requestIcon(id);
+			}
+			else
+			{
+				vt_images_watingDowload.addElement(imgNew[id]);
+			}
 		}
 	}
 

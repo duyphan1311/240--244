@@ -1,6 +1,7 @@
 using System;
 using Assets.src.e;
 using Assets.src.g;
+using UnityEngine;
 
 public class Char : IMapObject
 {
@@ -100,25 +101,9 @@ public class Char : IMapObject
 
 	public int cspeed = 4;
 
-	public int ccurrentAttack;
-
-	public int cDamFull;
-
-	public int cDefull;
-
 	public int cCriticalFull;
 
 	public int clevel;
-
-	public int cMP;
-
-	public int cHP;
-
-	public int cHPNew;
-
-	public int cMaxEXP;
-
-	public int cHPShow;
 
 	public int xReload;
 
@@ -132,13 +117,25 @@ public class Char : IMapObject
 
 	public int eff5BuffMp;
 
-	public int cHPFull;
-
-	public int cMPFull;
-
 	public int cdameDown;
 
 	public int cStr;
+
+	public long cMP;
+
+	public long cHP;
+
+	public long cHPNew;
+
+	public long cHPShow;
+
+	public long cHPFull;
+
+	public long cMPFull;
+
+	public long cDamFull;
+
+	public long cDefull;
 
 	public long cLevelPercent;
 
@@ -146,9 +143,9 @@ public class Char : IMapObject
 
 	public long cNangdong;
 
-	public int damHP;
+	public long damHP;
 
-	public int damMP;
+	public long damMP;
 
 	public bool isMob;
 
@@ -1087,7 +1084,7 @@ public class Char : IMapObject
 
 	public int perCentMp = 100;
 
-	public int dHP;
+	public long dHP;
 
 	public int headTemp = -1;
 
@@ -1845,10 +1842,10 @@ public class Char : IMapObject
 		}
 		else if (dHP > cHP)
 		{
-			int num = dHP - cHP >> 1;
+			long num = dHP - cHP >> 1;
 			if (num < 1)
 			{
-				num = 1;
+				num = 1L;
 			}
 			dHP -= num;
 		}
@@ -2391,7 +2388,7 @@ public class Char : IMapObject
 							cHP -= cHPFull * 3 / 100;
 							if (cHP < 1)
 							{
-								cHP = 1;
+								cHP = 1L;
 							}
 						}
 					}
@@ -5091,7 +5088,7 @@ public class Char : IMapObject
 			myskill.lastTimeUseThisSkill = num;
 			if (myskill.template.manaUseType == 2)
 			{
-				cMP = 1;
+				cMP = 1L;
 			}
 			else if (myskill.template.manaUseType != 1)
 			{
@@ -5103,10 +5100,10 @@ public class Char : IMapObject
 			}
 			myCharz().cStamina--;
 			GameScr.gI().isInjureMp = true;
-			GameScr.gI().twMp = 0;
+			GameScr.gI().twMp = 0L;
 			if (cMP < 0)
 			{
-				cMP = 0;
+				cMP = 0L;
 			}
 		}
 		if (me)
@@ -5905,7 +5902,7 @@ public class Char : IMapObject
 
 	public void paintHp(mGraphics g, int x, int y)
 	{
-		int num = cHP * 100 / cHPFull / 10 - 1;
+		int num = (int)((int)cHP * 100 / cHPFull) / 10 - 1;
 		if (num < 0)
 		{
 			num = 0;
@@ -5922,8 +5919,8 @@ public class Char : IMapObject
 		{
 			return;
 		}
-		len = (int)((long)cHP * 100L / cHPFull * w_hp_bar) / 100;
-		num = (int)((long)cHP * 100L / cHPFull);
+		len = (int)(cHP * 100 / cHPFull * w_hp_bar) / 100;
+		num = (int)(cHP * 100 / cHPFull);
 		if (num < 30)
 		{
 			imgHPtem = GameScr.imgHP_tm_do;
@@ -6078,10 +6075,6 @@ public class Char : IMapObject
 		if ((paintName || flag2 || flag3) && !flag)
 		{
 			if (mSystem.clientType == 1)
-			{
-				mFont2.drawString(g, cName, cx, cy - num, mFont.CENTER, mFont.tahoma_7_greySmall);
-			}
-			else if (charID == -83)
 			{
 				mFont2.drawString(g, cName, cx, cy - num, mFont.CENTER, mFont.tahoma_7_greySmall);
 			}
@@ -6355,7 +6348,7 @@ public class Char : IMapObject
 			if (!ClanImage.idImages.containsKey(bag + string.Empty))
 			{
 				ClanImage.idImages.put(bag + string.Empty, new ClanImage());
-				Service.gI().requestBagImage((sbyte)bag);
+				Service.gI().requestBagImage(bag);
 			}
 			else
 			{
@@ -6411,18 +6404,25 @@ public class Char : IMapObject
 		else
 		{
 			paintHat_behind(g, cf, cy - CharInfo[cf][2][2] + pb.pi[CharInfo[cf][2][0]].dy);
-			if (isHead_2Fr(head))
+			try
 			{
-				Part part2 = GameScr.parts[getFHead(head)];
-				SmallImage.drawSmallImage(g, part2.pi[CharInfo[cf][0][0]].id, cx + (CharInfo[cf][0][1] + part2.pi[CharInfo[cf][0][0]].dx) * num2, cy - CharInfo[cf][0][2] + part2.pi[CharInfo[cf][0][0]].dy, num, anchor);
+				if (isHead_2Fr(head))
+				{
+					Part part2 = GameScr.parts[getFHead(head)];
+					SmallImage.drawSmallImage(g, part2.pi[CharInfo[cf][0][0]].id, cx + (CharInfo[cf][0][1] + part2.pi[CharInfo[cf][0][0]].dx) * num2, cy - CharInfo[cf][0][2] + part2.pi[CharInfo[cf][0][0]].dy, num, anchor);
+				}
+				else
+				{
+					SmallImage.drawSmallImage(g, ph.pi[CharInfo[cf][0][0]].id, cx + (CharInfo[cf][0][1] + ph.pi[CharInfo[cf][0][0]].dx) * num2, cy - CharInfo[cf][0][2] + ph.pi[CharInfo[cf][0][0]].dy, num, anchor);
+				}
+				SmallImage.drawSmallImage(g, pl.pi[CharInfo[cf][1][0]].id, cx + (CharInfo[cf][1][1] + pl.pi[CharInfo[cf][1][0]].dx) * num2, cy - CharInfo[cf][1][2] + pl.pi[CharInfo[cf][1][0]].dy, num, anchor);
+				SmallImage.drawSmallImage(g, pb.pi[CharInfo[cf][2][0]].id, cx + (CharInfo[cf][2][1] + pb.pi[CharInfo[cf][2][0]].dx) * num2, cy - CharInfo[cf][2][2] + pb.pi[CharInfo[cf][2][0]].dy, num, anchor);
+				paintRedEye(g, cx + (CharInfo[cf][0][1] + ph.pi[CharInfo[cf][0][0]].dx) * num2, cy - CharInfo[cf][0][2] + ph.pi[CharInfo[cf][0][0]].dy, num, anchor);
 			}
-			else
+			catch (Exception ex)
 			{
-				SmallImage.drawSmallImage(g, ph.pi[CharInfo[cf][0][0]].id, cx + (CharInfo[cf][0][1] + ph.pi[CharInfo[cf][0][0]].dx) * num2, cy - CharInfo[cf][0][2] + ph.pi[CharInfo[cf][0][0]].dy, num, anchor);
+				Debug.LogError(">>>>>>err: " + ex.ToString());
 			}
-			SmallImage.drawSmallImage(g, pl.pi[CharInfo[cf][1][0]].id, cx + (CharInfo[cf][1][1] + pl.pi[CharInfo[cf][1][0]].dx) * num2, cy - CharInfo[cf][1][2] + pl.pi[CharInfo[cf][1][0]].dy, num, anchor);
-			SmallImage.drawSmallImage(g, pb.pi[CharInfo[cf][2][0]].id, cx + (CharInfo[cf][2][1] + pb.pi[CharInfo[cf][2][0]].dx) * num2, cy - CharInfo[cf][2][2] + pb.pi[CharInfo[cf][2][0]].dy, num, anchor);
-			paintRedEye(g, cx + (CharInfo[cf][0][1] + ph.pi[CharInfo[cf][0][0]].dx) * num2, cy - CharInfo[cf][0][2] + ph.pi[CharInfo[cf][0][0]].dy, num, anchor);
 		}
 		ch = ((isMonkey != 1 && !isFusion) ? (CharInfo[0][0][2] + ph.pi[CharInfo[0][0][0]].dy + 10) : 60);
 		int num4 = ((Res.abs(ph.pi[CharInfo[cf][0][0]].dy) < 22) ? ph.pi[CharInfo[cf][0][0]].dy : ((ph.pi[CharInfo[cf][0][0]].dy >= 0) ? (ph.pi[CharInfo[cf][0][0]].dy - 5) : (ph.pi[CharInfo[cf][0][0]].dy + 5)));
@@ -6647,7 +6647,7 @@ public class Char : IMapObject
 		cp3 = 0;
 	}
 
-	public static void getcharInjure(int cID, int dx, int dy, int HP)
+	public static void getcharInjure(int cID, int dx, int dy, long HP)
 	{
 		Char @char = (Char)GameScr.vCharInMap.elementAt(cID);
 		if (@char.vMovePoints.size() != 0)
@@ -6659,7 +6659,7 @@ public class Char : IMapObject
 			char2.cHP -= HP;
 			if (char2.cHP < 0)
 			{
-				char2.cHP = 0;
+				char2.cHP = 0L;
 			}
 			char2.cHPShow = ((Char)GameScr.vCharInMap.elementAt(cID)).cHP - HP;
 			char2.statusMe = 6;
@@ -7295,7 +7295,7 @@ public class Char : IMapObject
 		}
 	}
 
-	public void doInjure(int HPShow, int MPShow, bool isCrit, bool isMob)
+	public void doInjure(long HPShow, long MPShow, bool isCrit, bool isMob)
 	{
 		this.isCrit = isCrit;
 		this.isMob = isMob;
@@ -7303,16 +7303,16 @@ public class Char : IMapObject
 		cHP -= HPShow;
 		cMP -= MPShow;
 		GameScr.gI().isInjureHp = true;
-		GameScr.gI().twHp = 0;
+		GameScr.gI().twHp = 0L;
 		GameScr.gI().isInjureMp = true;
-		GameScr.gI().twMp = 0;
+		GameScr.gI().twMp = 0L;
 		if (cHP < 0)
 		{
-			cHP = 0;
+			cHP = 0L;
 		}
 		if (cMP < 0)
 		{
-			cMP = 0;
+			cMP = 0L;
 		}
 		if (isMob || (!isMob && cTypePk != 4 && damMP != -100))
 		{
@@ -7348,9 +7348,9 @@ public class Char : IMapObject
 	public void doInjure()
 	{
 		GameScr.gI().isInjureHp = true;
-		GameScr.gI().twHp = 0;
+		GameScr.gI().twHp = 0L;
 		GameScr.gI().isInjureMp = true;
-		GameScr.gI().twMp = 0;
+		GameScr.gI().twMp = 0L;
 		isInjure = 6;
 		ServerEffect.addServerEffect(8, this, 1);
 		isInjureHp = true;
@@ -7386,7 +7386,7 @@ public class Char : IMapObject
 		cp2 = toX;
 		cp3 = toY;
 		cp1 = 0;
-		cHP = 0;
+		cHP = 0L;
 		testCharId = -9999;
 		killCharId = -9999;
 		if (me && myskill != null && myskill.template.id != 14)
@@ -8133,7 +8133,7 @@ public class Char : IMapObject
 			myskill.lastTimeUseThisSkill = lastTimeUseThisSkill;
 			if (myskill.template.manaUseType == 2)
 			{
-				cMP = 1;
+				cMP = 1L;
 			}
 			else if (myskill.template.manaUseType != 1)
 			{
@@ -8145,10 +8145,10 @@ public class Char : IMapObject
 			}
 			myCharz().cStamina--;
 			GameScr.gI().isInjureMp = true;
-			GameScr.gI().twMp = 0;
+			GameScr.gI().twMp = 0L;
 			if (cMP < 0)
 			{
-				cMP = 0;
+				cMP = 0L;
 			}
 		}
 		switch (idskillPaint)
